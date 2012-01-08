@@ -1,10 +1,13 @@
 #!/usr/bin/env python
+from functools import partial
 import itertools
 import math
+from random import random
 
 import kivy
 from kivy.app import App
 from kivy.clock import Clock
+from kivy.core.window import Window
 from kivy.lang import Builder
 from kivy.graphics import Color, Ellipse, Line
 from kivy.properties import ListProperty, NumericProperty
@@ -54,6 +57,23 @@ class Shot(Widget):
         self.motion_v = m_v + (g_v * 1. / g_v.length2()) * body.mass
 
 
+class Stars(Widget):
+    points = ListProperty([(0,0), (0, 0), (0, 0)])
+
+    def __init__(self, number_of_stars, **kwargs):
+        super(Stars, self).__init__(**kwargs)
+        Clock.schedule_once(partial(self.add_stars, number_of_stars), -1)
+
+    def add_stars(self, number_of_stars, dt):
+        width = self.parent.width
+        height = self.parent.height
+        self.points[0] = list(itertools.chain(*[(random() * width, random() * height)
+                                                for i in xrange(number_of_stars)]))
+        self.points[1] = list(itertools.chain(*[(random() * width, random() * height)
+                                                for i in xrange(number_of_stars/3)]))
+        self.points[2] = list(itertools.chain(*[(random() * width, random() * height)
+                                                for i in xrange(number_of_stars/50)]))
+
 class FlingBoard(FloatLayout):
     """
     Main application widget, takes all the touches.
@@ -63,7 +83,13 @@ class FlingBoard(FloatLayout):
         self.aim_line = None
         self.black_hole = None
         self.shots = []
+        Window.clearcolor = (0.1, 0.1, 0.1, 1.)
+        Clock.schedule_once(self.add_stars, -1)
         Clock.schedule_interval(self.tick, 1 / 60.)
+
+    def add_stars(self, dt):
+        self.stars = Stars(2000)
+        self.add_widget(self.stars)
 
     def on_touch_down(self, touch):
         if touch.is_double_tap:
