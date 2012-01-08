@@ -37,6 +37,10 @@ class BlackHole(Widget):
     def __init__(self, **kwargs):
         super(BlackHole, self).__init__(**kwargs)
 
+    def collide_point(self, x, y):
+        if (Vector(x, y) - Vector(self.pos)).length() < self.d:
+            return True
+
 
 class Shot(Widget):
     d = NumericProperty(10.)
@@ -81,7 +85,7 @@ class FlingBoard(FloatLayout):
     def __init__(self, *args, **kwargs):
         super(FlingBoard, self).__init__()
         self.aim_line = None
-        self.black_hole = None
+        self.black_holes = []
         self.shots = []
         Window.clearcolor = (0.1, 0.1, 0.1, 1.)
         Clock.schedule_once(self.add_stars, -1)
@@ -93,10 +97,14 @@ class FlingBoard(FloatLayout):
 
     def on_touch_down(self, touch):
         if touch.is_double_tap:
-            if self.black_hole:
-                self.remove_widget(self.black_hole)
-            self.black_hole = BlackHole(pos=touch.pos)
-            self.add_widget(self.black_hole)
+            for black_hole in self.black_holes:
+                if black_hole.collide_point(*touch.pos):
+                    self.remove_widget(black_hole)
+                    self.black_holes.remove(black_hole)
+                    return True
+            black_hole = BlackHole(pos=touch.pos)
+            self.add_widget(black_hole)
+            self.black_holes.append(black_hole)
         self.aim_line = AimLine(touch.pos)
         self.add_widget(self.aim_line)
         return True
@@ -129,9 +137,9 @@ class FlingBoard(FloatLayout):
                 shots_collide(shot1, shot2)
 
         for shot in self.shots:
-            if self.black_hole:
-                shot.gravitate_towards(self.black_hole)
-                if circles_collide(shot, self.black_hole):
+            for black_hole in self.black_holes:
+                shot.gravitate_towards(black_hole)
+                if circles_collide(shot, black_hole):
                     self.remove_widget(shot)
                     self.shots.remove(shot)
             shot.move()
