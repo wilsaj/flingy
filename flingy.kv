@@ -11,6 +11,24 @@
             dash_offset: 4.
 
 
+<BlackHole>:
+    canvas:
+        Color:
+            rgb: .2, .2, .2
+        Ellipse:
+            pos: (self.x - self.d/2, self.y - self.d/2)
+            size: (self.d, self.d)
+        Color:
+            rgb: .1, .1, .1
+        Ellipse:
+            pos: (self.x - (self.d * .75)/2, self.y - (self.d * .75)/2)
+            size: (self.d * .75, self.d * .75)
+        Color:
+            rgb: .0, .0, .0
+        Ellipse:
+            pos: (self.x - (self.d * .5)/2, self.y - (self.d * .5)/2)
+            size: (self.d * .5, self.d * .5)
+
 <Shot>:
     d: 10.
     canvas:

@@ -26,20 +26,30 @@ class AimLine(Widget):
         self.end_pt = start_pt
 
 
+class BlackHole(Widget):
+    d = NumericProperty(50.)
+    mass = NumericProperty(50.)
+
+    def __init__(self, **kwargs):
+        super(BlackHole, self).__init__(**kwargs)
+
+
 class Shot(Widget):
     d = NumericProperty(10.)
-    motion_x = NumericProperty(0.)
-    motion_y = NumericProperty(0.)
+    motion_v = ListProperty([0, 0])
 
-    def __init__(self, motion_x, motion_y, **kwargs):
+    def __init__(self, motion_v, **kwargs):
         super(Shot, self).__init__(**kwargs)
-        self.motion_x = motion_x
-        self.motion_y = motion_y
-        Clock.schedule_interval(self.move, 1 / 60.)
+        self.motion_v = motion_v
 
-    def move(self, dt):
-        self.x += self.motion_x
-        self.y += self.motion_y
+    def move(self):
+        self.x += self.motion_v[0]
+        self.y += self.motion_v[1]
+
+    def gravitate_towards(self, body):
+        m_v = Vector(self.motion_v)
+        g_v = Vector(body.pos) - Vector(self.pos)
+        self.motion_v = m_v + (g_v * 1. / g_v.length2()) * body.mass
 
 
 class FlingBoard(FloatLayout):
@@ -51,8 +61,14 @@ class FlingBoard(FloatLayout):
         self.aim_line = None
         self.black_hole = None
         self.shots = []
+        Clock.schedule_interval(self.tick, 1 / 60.)
 
     def on_touch_down(self, touch):
+        if touch.is_double_tap:
+            if self.black_hole:
+                self.remove_widget(self.black_hole)
+            self.black_hole = BlackHole(pos=touch.pos)
+            self.add_widget(self.black_hole)
         self.aim_line = AimLine(touch.pos)
         self.add_widget(self.aim_line)
         return True
@@ -74,15 +90,31 @@ class FlingBoard(FloatLayout):
             return
         motion_v /= math.sqrt(l)
 
-        shot = Shot(motion_x=motion_v.x, motion_y=motion_v.y, pos=(touch.x, touch.y))
+        shot = Shot(motion_v=motion_v, pos=(touch.x, touch.y))
         self.add_widget(shot)
         self.remove_widget(self.aim_line)
         self.shots.append(shot)
+
+    def tick(self, dt):
+
+        for shot in self.shots:
+            if self.black_hole:
+                shot.gravitate_towards(self.black_hole)
+                if circles_collide(shot, self.black_hole):
+                    self.remove_widget(shot)
+                    self.shots.remove(shot)
+            shot.move()
 
 
 class FlingyApp(App):
     def build(self):
         return FlingBoard()
+
+
+def circles_collide(widget_1, widget_2):
+    widget_distance = Vector(widget_1.pos).distance(Vector(widget_2.pos))
+    radial_distance = (widget_1.d + widget_2.d) / 2.
+    return widget_distance < radial_distance
 
 if __name__ == '__main__':
     FlingyApp().run()
