@@ -1,0 +1,21 @@
+#:kivy 1.0
+
+
+<AimLine>:
+    canvas:
+        Color:
+            rgb: 1., .2, .2
+        Line:
+            points: [self.start_pt[0], self.start_pt[1], self.end_pt[0], self.end_pt[1]]
+            dash_length: 1.
+            dash_offset: 4.
+
+
+<Shot>:
+    d: 10.
+    canvas:
+        Color:
+            rgb: .5, .5, .5
+        Ellipse:
+            pos: (self.x - self.d/2, self.y - self.d/2)
+            size: (self.d, self.d)
