@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import itertools
 import math
 
 import kivy
@@ -13,7 +14,7 @@ from kivy.uix.widget import Widget
 from kivy.uix.button import Button
 
 
-kivy.require('1.0.9') # replace with your current kivy version !
+kivy.require('1.0.9')
 
 
 class AimLine(Widget):
@@ -36,6 +37,7 @@ class BlackHole(Widget):
 
 class Shot(Widget):
     d = NumericProperty(10.)
+    mass = NumericProperty(1.)
     motion_v = ListProperty([0, 0])
 
     def __init__(self, motion_v, **kwargs):
@@ -96,6 +98,9 @@ class FlingBoard(FloatLayout):
         self.shots.append(shot)
 
     def tick(self, dt):
+        for shot1, shot2 in itertools.combinations(self.shots, 2):
+            if circles_collide(shot1, shot2):
+                shots_collide(shot1, shot2)
 
         for shot in self.shots:
             if self.black_hole:
@@ -115,6 +120,14 @@ def circles_collide(widget_1, widget_2):
     widget_distance = Vector(widget_1.pos).distance(Vector(widget_2.pos))
     radial_distance = (widget_1.d + widget_2.d) / 2.
     return widget_distance < radial_distance
+
+
+def shots_collide(shot1, shot2):
+    p1_v = Vector(shot1.pos)
+    p2_v = Vector(shot2.pos)
+    shot1.motion_v = (p1_v - p2_v).normalize() / Vector(shot1.motion_v).length()
+    shot2.motion_v = (p2_v - p1_v).normalize() / Vector(shot2.motion_v).length()
+
 
 if __name__ == '__main__':
     FlingyApp().run()
