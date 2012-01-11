@@ -18,19 +18,29 @@
 \begin{frame}{hey who let you in here}
 I'm Andy.
 
-My level of experience:
+Experience with mobile/desktop apps:
 
-I tried to do something with pygame once but got bored.
-
+\begin{itemize}
+  \item Kivy user since 2012
+    \pause
+    Saturday
+    \pause
+  \item I've used (and like) ETS (TraitsUI, Chaco) for numpy/scipy-type apps
+  \pause
+  \item Occasionally fiddle with Qt and friends (PyQT4, pyside)
+  \pause
+  \item I tried to do something with pygame once but got bored
+  \pause
+\end{itemize}
 \end{frame}
 
 
 \begin{frame}{the skinny}
 
 \begin{itemize}
-  \item Fast: OpenGL hardware accelerated goodness baked in
+  \item Fast: OpenGL hardware accelerated goodness (OpenGL ES 2.0) baked in
   \pause
-  \item Easy: beautiful API
+  \item Simple: beautiful API
   \pause
   \item Multitouchtouchtouch
   \pause
@@ -45,6 +55,7 @@ I tried to do something with pygame once but got bored.
 
 
 \begin{frame}{howsisworkthen?}
+
 \begin{center}
   \includegraphics[height=.75\textheight]{architecture.png}
 \end{center}
@@ -55,37 +66,65 @@ source: http://kivy.org/docs/guide/architecture.html
 
 
 \begin{frame}{widgets}
-
 \begin{itemize}
-  \item 
-  \item use Kivy + pure python (no custom C or C extensions)
-  \item put it on github
-  \item ends Jan 31st (registration deadline: Jan 25th)
-  \item prizes: android tablets, github subscriptions, t-shirts
+  \item anything you touch
+  \pause
+  \item every kivy app has at least one root widget that takes up the whole app window/frame/screen
+  \pause
+  \item it's a tree!
+  \pause
+  \item they're great
+  \pause
+  \item
 \end{itemize}
 
 \end{frame}
 
 
+% \begin{itemize}
+%   \item
+%   \pause
+%   \item
+% \end{itemize}
+
+\begin{frame}{graphics}
+\end{frame}
+
+\begin{frame}[fragile]{graphics example}
+  \begin{minted}[linenos]{python}
+    class Foo(Widget):
+        def __init__(self, **kwargs):
+            super(Foo, self).__init__(**kwargs)
+            with self.canvas:
+                # set color
+                Color(1., 0., 0.)
+                # draw stuff with primitives
+                Rectangle(100, 100)
+  \end{minted}
+\end{frame}
+
+
+\begin{frame}{kivy language (.kv)}
+
+\end{frame}
+
+
+\begin{frame}{events}
+
+\end{frame}
+
+
+\begin{frame}{other nicities}
+\begin{itemize}
+  \item Cache
+  \pause
+  \item Vectors!!!
+\end{itemize}
+\end{frame}
+
 
 \begin{frame}[fragile]{hello world}
-  \begin{minted}[linenos]{python}
-    from kivy.app import App
-    from kivy.uix.widget import Widget
-
-    class HelloWidget(Widget):
-
-        pass
-
-    class WorldApp(App):
-        def build(self):
-            return HelloWidget()
-
-    if __name__ == '__main__':
-        WorldApp().run()
-
-    TestApp().run()
-  \end{minted}
+  \inputminted{python}{hello_world.py}
 \end{frame}
 
 
@@ -107,12 +146,11 @@ contest: \url{http://kivy.org/\#contest}
 
 \begin{itemize}
   \item make a game
-  \item use Kivy + pure python (no custom C or C extensions)
+  \item use Kivy + pure python - no custom C or C extensions
   \item put it on github
-  \item ends Jan 31st (registration deadline: Jan 25th)
+  \item registration deadline is Jan 25th - contest ends Jan 31st
   \item prizes: android tablets, github subscriptions, t-shirts
 \end{itemize}
-
 \end{frame}
 
 
