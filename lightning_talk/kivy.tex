@@ -2,11 +2,10 @@
 \usetheme{Malmoe}
 \usepackage{minted}
 \usepackage{hyperref}
+\usepackage{listings}
 
 
 \title[Kivy]{Kivy: a sweet new app development framework}
-\author[Andy Wilson]{Andy Wilson}
-\date[January 2012]{January 11, 2012}
 
 \begin{document}
 %--- the titlepage frame -------------------------%
@@ -16,21 +15,17 @@
 
 
 \begin{frame}{hey who let you in here}
-I'm Andy.
-
 Experience with mobile/desktop apps:
 
+\pause
 \begin{itemize}
-  \item Kivy user since 2012
-    \pause
-    Saturday
-    \pause
-  \item I've used (and like) ETS (TraitsUI, Chaco) for numpy/scipy-type apps
+  \item Kivy user since Saturday
   \pause
-  \item Occasionally fiddle with Qt and friends (PyQT4, pyside)
+  \item I've used ETS (TraitsUI, Chaco) for numpy/scipy-type apps
+  \pause
+  \item Occasionally fiddle with Qt and friends: PyQT4, pyside
   \pause
   \item I tried to do something with pygame once but got bored
-  \pause
 \end{itemize}
 \end{frame}
 
@@ -38,7 +33,13 @@ Experience with mobile/desktop apps:
 \begin{frame}{the skinny}
 
 \begin{itemize}
-  \item Fast: OpenGL hardware accelerated goodness (OpenGL ES 2.0) baked in
+  \item Fast
+    \pause
+    \begin{itemize}
+    \item graphics system implemented OpenGL ES 2.0
+    \pause
+    \item important bits written in C/Cython
+    \end{itemize}
   \pause
   \item Simple: beautiful API
   \pause
@@ -66,59 +67,28 @@ source: http://kivy.org/docs/guide/architecture.html
 
 
 \begin{frame}{widgets}
+Widgets are...
+\pause
 \begin{itemize}
+  \item anything you draw
+  \pause
   \item anything you touch
   \pause
-  \item every kivy app has at least one root widget that takes up the whole app window/frame/screen
+  \item anything you want to remember
   \pause
-  \item it's a tree!
-  \pause
-  \item they're great
-  \pause
-  \item
-\end{itemize}
-
-\end{frame}
-
-
-% \begin{itemize}
-%   \item
-%   \pause
-%   \item
-% \end{itemize}
-
-\begin{frame}{graphics}
-\end{frame}
-
-\begin{frame}[fragile]{graphics example}
-  \begin{minted}[linenos]{python}
-    class Foo(Widget):
-        def __init__(self, **kwargs):
-            super(Foo, self).__init__(**kwargs)
-            with self.canvas:
-                # set color
-                Color(1., 0., 0.)
-                # draw stuff with primitives
-                Rectangle(100, 100)
-  \end{minted}
-\end{frame}
-
-
-\begin{frame}{kivy language (.kv)}
-
-\end{frame}
-
-
-\begin{frame}{events}
-
-\end{frame}
-
-
-\begin{frame}{other nicities}
-\begin{itemize}
-  \item Cache
-  \pause
-  \item Vectors!!!
+  \item trees
+    \begin{itemize}
+    \pause
+    \item there's always at least one root widget
+    \pause
+    \item attach a widget: parent.add\_widget(child)
+    \pause
+    \item list widgets: parent.children == [child]
+    \pause
+    \item remove a widget: parent.remove\_widget(child) or parent.clear\_widgets()
+    \pause
+    \item remove all widgets: parent.clear\_widgets()
+    \end{itemize}
 \end{itemize}
 \end{frame}
 
@@ -127,6 +97,133 @@ source: http://kivy.org/docs/guide/architecture.html
   \inputminted{python}{hello_world.py}
 \end{frame}
 
+
+\begin{frame}{properties}
+  Widgets can have properties. Properties are values you can bind callback functions to.
+  \pause
+  Examples:
+    \begin{itemize}
+    \item StringProperty
+    \pause
+    \item ListProperty
+    \pause
+    \item BooleanProperty
+    \pause
+    \item ObjectProperty
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}[fragile]{property example}
+  \inputminted{python}{property_example.py}
+\end{frame}
+
+
+% \begin{frame}{final note on properties}
+%   You can also register and dispatch custom events if you need to get fancy.
+% \end{frame}
+
+
+\begin{frame}{clock}
+There's also a clock.
+\pause
+It does what you think it does.
+\pause
+\begin{itemize}
+  \item schedule an event: clock.schedule\_once(some\_function, number\_of\_seconds)
+  \pause
+  \item schedule repeated events: clock.schedule\_interval(some\_function, number\_of\_seconds)
+  \pause
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{input... more input}
+  When someone touches the screen or clicks the mouse on a widget,
+  input events are automatically fired and dispatched to methods on
+  the widget:
+  \pause
+  \begin{itemize}
+  \item on\_touch\_down()
+  \pause
+  \item on\_touch\_move()
+  \pause
+  \item on\_touch\_up()
+  \pause
+\end{itemize}
+If there are widgets on top of other widgets, the top-most widget can
+choose to intercept the touch or pass it along.
+\pause
+So handling input is easy.
+\end{frame}
+
+
+
+% \begin{itemize}
+%   \item
+%   \pause
+%   \item
+% \end{itemize}
+
+
+\begin{frame}[fragile]{graphics}
+  Every widget has a canvas, and it works like this:
+  \begin{minted}[linenos]{python}
+    class Foo(Widget):
+        def __init__(self, **kwargs):
+            super(Foo, self).__init__(**kwargs)
+            with self.canvas:
+                # set color
+                Color(1., 0., 0.)
+                # draw stuff with primitives
+                Rectangle(pos=(20, 30), size=(100, 100))
+            # nevermind; erase what we just did
+            self.canvas.clear()
+  \end{minted}
+\end{frame}
+
+
+\begin{frame}{graphics}
+  Canvas instructions get translated to OpenGL instructions.
+
+  It's very snappy.
+
+  \pause
+  But when building something non-trivial, you end up having to keep
+  tabs on lots of canvas state yourself.
+\end{frame}
+
+
+\begin{frame}[fragile]{kivy language (.kv)}
+  Enter the kivy language.
+  \begin{lstlisting}
+  <Foo>:
+      canvas:
+          Color:
+              rgb: 1., .0, .0
+          Rectangle:
+              pos: (20, 30)
+              size: (100, 100)
+  \end{lstlisting}
+
+  Now widgets know how to draw themselves.
+\end{frame}
+
+
+\begin{frame}{stop}
+  demo time
+\end{frame}
+
+
+\begin{frame}{other nicities}
+  \begin{itemize}
+  \item cache
+  \pause
+  \item vectors!
+  \pause
+  \item gesture recognition
+  \end{itemize}
+\end{frame}
 
 
 \begin{frame}{[CITATION NEEDED]}

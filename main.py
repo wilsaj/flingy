@@ -78,7 +78,7 @@ class Stars(Widget):
         self.points[2] = list(itertools.chain(*[(random() * width, random() * height)
                                                 for i in xrange(number_of_stars/50)]))
 
-class FlingBoard(FloatLayout):
+class FlingBoard(Widget):
     """
     Main application widget, takes all the touches.
     """
