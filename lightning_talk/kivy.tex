@@ -8,20 +8,21 @@
 \title[Kivy]{Kivy: a sweet new app development framework}
 
 \begin{document}
-%--- the titlepage frame -------------------------%
+
+
 \begin{frame}[plain]
   \titlepage
 \end{frame}
 
 
 \begin{frame}{hey who let you in here}
-Experience with mobile/desktop apps:
+my experience with mobile/desktop apps:
 
 \pause
 \begin{itemize}
   \item Kivy user since Saturday
   \pause
-  \item I've used ETS (TraitsUI, Chaco) for numpy/scipy-type apps
+  \item ETS (TraitsUI, Chaco) for numpy/scipy-type apps
   \pause
   \item Occasionally fiddle with Qt and friends: PyQT4, pyside
   \pause
@@ -31,7 +32,6 @@ Experience with mobile/desktop apps:
 
 
 \begin{frame}{the skinny}
-
 \begin{itemize}
   \item Fast
     \pause
@@ -47,11 +47,10 @@ Experience with mobile/desktop apps:
   \pause
   \item Crossplatform: Linux, Windows, OSX, Android
   \pause
-  ...iOS (coming soon?)
+  , ...iOS?
   \pause
   \item License: LGPL3
 \end{itemize}
-
 \end{frame}
 
 
@@ -74,20 +73,20 @@ Widgets are...
   \pause
   \item anything you touch
   \pause
-  \item anything you want to remember
+  \item anything you want to remember (data)
   \pause
   \item trees
     \begin{itemize}
     \pause
     \item there's always at least one root widget
     \pause
-    \item attach a widget: parent.add\_widget(child)
+    \item parent.add\_widget(child) - attach a widget
     \pause
-    \item list widgets: parent.children == [child]
+    \item parent.children - a list of widgets
     \pause
-    \item remove a widget: parent.remove\_widget(child) or parent.clear\_widgets()
+    \item parent.remove\_widget(child) - remove a widget
     \pause
-    \item remove all widgets: parent.clear\_widgets()
+    \item parent.clear\_widgets() - remove all widgets
     \end{itemize}
 \end{itemize}
 \end{frame}
@@ -101,6 +100,7 @@ Widgets are...
 \begin{frame}{properties}
   Widgets can have properties. Properties are values you can bind callback functions to.
   \pause
+
   Examples:
     \begin{itemize}
     \item StringProperty
@@ -127,34 +127,32 @@ Widgets are...
 \begin{frame}{clock}
 There's also a clock.
 \pause
+
 It does what you think it does.
+
 \pause
 \begin{itemize}
-  \item schedule an event: clock.schedule\_once(some\_function, number\_of\_seconds)
+  \item clock.schedule\_once(some\_function, number\_of\_seconds)
   \pause
-  \item schedule repeated events: clock.schedule\_interval(some\_function, number\_of\_seconds)
+  \item clock.schedule\_interval(some\_function, number\_of\_seconds)
   \pause
 \end{itemize}
 \end{frame}
 
 
 \begin{frame}{input... more input}
-  When someone touches the screen or clicks the mouse on a widget,
-  input events are automatically fired and dispatched to methods on
-  the widget:
+  Input events come with all widgets; just override these methods
+
   \pause
   \begin{itemize}
-  \item on\_touch\_down()
+  \item on\_touch\_down()  - someone touchs/clicks this widget
   \pause
-  \item on\_touch\_move()
+  \item on\_touch\_move()  - someone drags this widget
   \pause
-  \item on\_touch\_up()
+  \item on\_touch\_up()    - someone stops touching/clicking this widget
   \pause
 \end{itemize}
-If there are widgets on top of other widgets, the top-most widget can
-choose to intercept the touch or pass it along.
-\pause
-So handling input is easy.
+widgets can choose to intercept a touch or pass it along to their underwidgets
 \end{frame}
 
 
@@ -189,8 +187,9 @@ So handling input is easy.
   It's very snappy.
 
   \pause
+
   But when building something non-trivial, you end up having to keep
-  tabs on lots of canvas state yourself.
+  track of canvas state yourself (when to clear, when to draw).
 \end{frame}
 
 
@@ -228,22 +227,19 @@ So handling input is easy.
 
 \begin{frame}{[CITATION NEEDED]}
 
-Kivy project:  \url{http://kivy.org}
+homepage:  \url{http://kivy.org}
 
-Source: \url{http://github.com/kivy/kivy}
-
-Code/presentation: \url{http://github.com/wilsaj/flingy}
+on github: \url{http://github.com/kivy/kivy}
 
 \end{frame}
 
 
-\begin{frame}{two men enter one man leaves}
+\begin{frame}{two (wo)men enter one (wo)man leaves}
 
 contest: \url{http://kivy.org/\#contest}
 
 \begin{itemize}
-  \item make a game
-  \item use Kivy + pure python - no custom C or C extensions
+  \item make a game with Kivy
   \item put it on github
   \item registration deadline is Jan 25th - contest ends Jan 31st
   \item prizes: android tablets, github subscriptions, t-shirts
