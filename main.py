@@ -10,7 +10,7 @@ from kivy.clock import Clock
 from kivy.core.window import Window
 from kivy.lang import Builder
 from kivy.graphics import Color, Ellipse, Line
-from kivy.properties import ListProperty, NumericProperty
+from kivy.properties import BooleanProperty, ListProperty, NumericProperty
 from kivy.vector import Vector
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.widget import Widget
@@ -40,6 +40,49 @@ class BlackHole(Widget):
     def collide_point(self, x, y):
         if (Vector(x, y) - Vector(self.pos)).length() < self.d:
             return True
+
+
+class Rocket(Widget):
+    l = NumericProperty(20.)
+    w = NumericProperty(8.)
+    tip_l = NumericProperty(1.5)
+    tip_w = NumericProperty(1.5)
+    motion_v = ListProperty([0, 0])
+    boost = BooleanProperty(False)
+    quad_points = ListProperty([0, 0, 0, 0, 0, 0, 0, 0])
+    # tip_points = ListProperty([0, 0, 0, 0, 0, 0])
+    def __init__(self, **kwargs):
+        super(Rocket, self).__init__(**kwargs)
+
+    def update_points(self):
+        m_v = Vector(self.motion_v)
+        l_v = m_v.normalize() * self.l / 2.
+        # orthogonal vector
+        o_v = m_v.normalize().rotate(90) * self.w / 2.
+        self.quad_points = [self.x - (l_v + o_v)[0], self.y - (l_v + o_v)[1],
+                            self.x + (l_v - o_v)[0], self.y + (l_v - o_v)[1],
+                            self.x + (l_v + o_v)[0], self.y + (l_v + o_v)[1],
+                            self.x - (l_v - o_v)[0], self.y - (l_v - o_v)[1],
+                            ]
+
+        # self.tip_points = [
+        #     self.x + (l_v * self.tip_l)[0], self.y + (l_v * self.tip_l)[1],
+        #     self.x + (l_v + (o_v + Vector(self.tip_w, 0)))[0], self.y + (l_v + (o_v + Vector(self.tip_w, 0)))[1],
+        #     self.x + (l_v - (o_v - Vector(self.tip_w, 0)))[0], self.y + (l_v + (o_v - Vector(self.tip_w, 0)))[1],
+        #     ]
+
+    def move(self):
+        if self.boost:
+            m_v = Vector(self.motion_v)
+            self.motion_v = m_v + m_v.normalize()
+        self.x += self.motion_v[0]
+        self.y += self.motion_v[1]
+        self.update_points()
+
+    def gravitate_towards(self, body):
+        m_v = Vector(self.motion_v)
+        g_v = Vector(body.pos) - Vector(self.pos)
+        self.motion_v = m_v + (g_v * 1. / g_v.length2()) * body.mass
 
 
 class Shot(Widget):
@@ -87,6 +130,7 @@ class FlingBoard(Widget):
         self.aim_line = None
         self.black_holes = []
         self.shots = []
+        self.rockets = []
         Window.clearcolor = (0.1, 0.1, 0.1, 1.)
         Clock.schedule_once(self.add_stars, -1)
         Clock.schedule_interval(self.tick, 1 / 60.)
@@ -126,10 +170,14 @@ class FlingBoard(Widget):
             return
         motion_v /= math.sqrt(l)
 
-        shot = Shot(motion_v=motion_v, pos=(touch.x, touch.y))
-        self.add_widget(shot)
+        # shot = Shot(motion_v=motion_v, pos=(touch.x, touch.y))
+        # self.add_widget(shot)
+        # self.shots.append(shot)
+        rocket = Rocket(motion_v=motion_v, pos=(touch.x, touch.y))
+        self.add_widget(rocket)
+        self.rockets.append(rocket)
+
         self.remove_widget(self.aim_line)
-        self.shots.append(shot)
 
     def tick(self, dt):
         for shot1, shot2 in itertools.combinations(self.shots, 2):
@@ -143,6 +191,14 @@ class FlingBoard(Widget):
                     self.remove_widget(shot)
                     self.shots.remove(shot)
             shot.move()
+
+        for rocket in self.rockets:
+            for black_hole in self.black_holes:
+                rocket.gravitate_towards(black_hole)
+                if black_hole.collide_point(*rocket.pos):
+                    self.remove_widget(rocket)
+                    self.rockets.remove(rocket)
+            rocket.move()
 
 
 class FlingyApp(App):
