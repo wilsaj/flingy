@@ -38,7 +38,7 @@ class BlackHole(Widget):
         super(BlackHole, self).__init__(**kwargs)
 
     def collide_point(self, x, y):
-        if (Vector(x, y) - Vector(self.pos)).length() < self.d:
+        if (Vector(x, y) - Vector(self.pos)).length() < self.d / 2.:
             return True
 
 
