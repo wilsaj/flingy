@@ -105,7 +105,7 @@ class Shot(Widget):
 
 
 class Stars(Widget):
-    points = ListProperty([(0,0), (0, 0), (0, 0)])
+    points = ListProperty([(0, 0), (0, 0), (0, 0)])
 
     def __init__(self, number_of_stars, **kwargs):
         super(Stars, self).__init__(**kwargs)
@@ -114,12 +114,16 @@ class Stars(Widget):
     def add_stars(self, number_of_stars, dt):
         width = self.parent.width
         height = self.parent.height
-        self.points[0] = list(itertools.chain(*[(random() * width, random() * height)
-                                                for i in xrange(number_of_stars)]))
-        self.points[1] = list(itertools.chain(*[(random() * width, random() * height)
-                                                for i in xrange(number_of_stars/3)]))
-        self.points[2] = list(itertools.chain(*[(random() * width, random() * height)
-                                                for i in xrange(number_of_stars/50)]))
+        self.points[0] = list(itertools.chain(*[
+                    (random() * width, random() * height)
+                    for i in xrange(number_of_stars)]))
+        self.points[1] = list(itertools.chain(*[
+                    (random() * width, random() * height)
+                    for i in xrange(number_of_stars / 3)]))
+        self.points[2] = list(itertools.chain(*[
+                    (random() * width, random() * height)
+                    for i in xrange(number_of_stars / 50)]))
+
 
 class FlingBoard(Widget):
     """
