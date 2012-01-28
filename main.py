@@ -3,12 +3,14 @@ import itertools
 import math
 
 import kivy
+from kivy.animation import Animation
 from kivy.app import App
 from kivy.clock import Clock
 from kivy.core.window import Window
 from kivy.lang import Builder
 from kivy.vector import Vector
 from kivy.uix.floatlayout import FloatLayout
+from kivy.uix.label import Label
 from kivy.uix.widget import Widget
 
 from widgets import AimLine, BlackHole, GoalPoint, Rocket, Shot, Stars
@@ -24,13 +26,18 @@ class FlingBoard(Widget):
     """
     def __init__(self, *args, **kwargs):
         super(FlingBoard, self).__init__()
-        self.clear_level()
         Window.clearcolor = (0.1, 0.1, 0.1, 1.)
         Clock.schedule_once(self.add_stars, -1)
         Clock.schedule_interval(self.tick, 1 / 60.)
         self._keyboard = Window.request_keyboard(
             None, self)
         self._keyboard.bind(on_key_down=self._on_keyboard_down)
+        self.aim_line = None
+        self.black_holes = []
+        self.shots = []
+        self.rockets = []
+        self.goal_points = []
+        self.level_label = None
 
     def _on_keyboard_down(self, keyboard, keycode, text, modifiers):
         try:
@@ -46,15 +53,45 @@ class FlingBoard(Widget):
         self.add_widget(self.stars)
 
     def clear_level(self):
+        if self.aim_line:
+            self.remove_widget(self.aim_line)
+        if self.black_holes:
+            for black_hole in self.black_holes:
+                self.remove_widget(black_hole)
+        if self.shots:
+            for shot in self.shots:
+                self.remove_widget(shot)
+        if self.rockets:
+            for rocket in self.rockets:
+                self.remove_widget(rocket)
+        if self.goal_points:
+            for goal_point in self.goal_points:
+                self.remove_widget(goal_point)
+        if self.level_label:
+            self.remove_widget(self.level_label)
         self.aim_line = None
         self.black_holes = []
         self.shots = []
         self.rockets = []
         self.goal_points = []
+        self.level_label = None
 
     def load_level(self, level_index):
+        self.clear_level()
         level = levels.levels[level_index]()
         level.load(self)
+        level_text = "level %s: %s" % (level_index + 1, level.name)
+        self.display_level_text(level_text)
+
+    def display_level_text(self, level_text):
+        self.level_label = Label(
+            text=level_text, font_size=20, width=self.width, halign='center',
+            y=self.height - 200, color=(1., 1., 1., 0.))
+        self.add_widget(self.level_label)
+        anim = Animation(color=(1, 1, 1, 1), duration=2.) + \
+            Animation(color=(1, 1, 1, 1), duration=.5) + \
+            Animation(color=(1, 1, 1, 0), duration=2.)
+        anim.start(self.level_label)
 
     def on_touch_down(self, touch):
         if touch.is_double_tap:

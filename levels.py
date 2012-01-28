@@ -4,6 +4,8 @@ from widgets import AimLine, BlackHole, GoalPoint, Rocket, Shot, Stars
 
 
 class First(object):
+    name = "first fling"
+
     def load(self, fling_board):
         num_points = 10
         mid_height = fling_board.height / 2.
