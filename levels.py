@@ -17,8 +17,7 @@ class First(object):
         for i in range(num_points):
             i_x = start_x + i * step_x
             goal_point = GoalPoint(pos=(i_x, mid_height))
-            fling_board.add_widget(goal_point)
-            fling_board.goal_points.append(goal_point)
+            fling_board.add_goal_point(goal_point)
 
 
 class LongShot(object):
@@ -32,8 +31,7 @@ class LongShot(object):
         first_goal_point = GoalPoint(pos=(left_x, top_height))
         second_goal_point = GoalPoint(pos=(right_x, bottom_height))
         for goal_point in (first_goal_point, second_goal_point):
-            fling_board.add_widget(goal_point)
-            fling_board.goal_points.append(goal_point)
+            fling_board.add_goal_point(goal_point)
 
 
 class TwoTimed(object):
@@ -51,9 +49,7 @@ class TwoTimed(object):
                                    velocity_y=-1)
             Clock.schedule_interval(self.change_direction(goal_point),
                                     seconds_til_switch)
-            fling_board.add_widget(goal_point)
-            fling_board.goal_points.append(goal_point)
-
+            fling_board.add_goal_point(goal_point)
 
     def change_direction(self, goal_point):
         def change_func(dt):
@@ -72,15 +68,16 @@ class TwoTimedTwo(object):
         right_x = fling_board.width * .6
         seconds_til_switch = (top_height - bottom_height) / 60.
 
-        for start_x, start_y, start_velocity_y in ((left_x, top_height, -1),
-                                                   (right_x, bottom_height, 1)):
+        start_pos_vels = [
+            (left_x, top_height, -1),
+            (right_x, bottom_height, 1)]
+
+        for start_x, start_y, start_velocity_y in start_pos_vels:
             goal_point = GoalPoint(pos=(start_x, start_y),
                                    velocity_y=start_velocity_y)
             Clock.schedule_interval(self.change_direction(goal_point),
                                     seconds_til_switch)
-            fling_board.add_widget(goal_point)
-            fling_board.goal_points.append(goal_point)
-
+            fling_board.add_goal_point(goal_point)
 
     def change_direction(self, goal_point):
         def change_func(dt):

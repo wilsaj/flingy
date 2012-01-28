@@ -48,6 +48,18 @@ class FlingBoard(Widget):
         except ValueError:
             pass
 
+    def add_black_hole(self, black_hole):
+        self.black_holes.append(black_hole)
+        self.add_widget(black_hole)
+
+    def add_goal_point(self, goal_point):
+        self.goal_points.append(goal_point)
+        self.add_widget(goal_point)
+
+    def add_shot(self, shot):
+        self.shots.append(shot)
+        self.add_widget(shot)
+
     def add_stars(self, dt):
         self.stars = Stars(2000)
         self.add_widget(self.stars)
@@ -55,26 +67,21 @@ class FlingBoard(Widget):
     def clear_level(self):
         if self.aim_line:
             self.remove_widget(self.aim_line)
-        if self.black_holes:
-            for black_hole in self.black_holes:
-                self.remove_widget(black_hole)
-        if self.shots:
-            for shot in self.shots:
-                self.remove_widget(shot)
-        if self.rockets:
-            for rocket in self.rockets:
-                self.remove_widget(rocket)
-        if self.goal_points:
-            for goal_point in self.goal_points:
-                self.remove_widget(goal_point)
+
+        for black_hole in self.black_holes:
+            self.remove_widget(black_hole)
+        self.black_holes = []
+
+        for shot in self.shots:
+            self.remove_widget(shot)
+        self.shots = []
+
+        for goal_point in self.goal_points:
+            self.remove_widget(goal_point)
+        self.goal_points = []
+
         if self.level_label:
             self.remove_widget(self.level_label)
-        self.aim_line = None
-        self.black_holes = []
-        self.shots = []
-        self.rockets = []
-        self.goal_points = []
-        self.level_label = None
 
     def load_level(self, level_index):
         self.clear_level()
@@ -141,6 +148,18 @@ class FlingBoard(Widget):
         # self.rockets.append(rocket)
 
         self.remove_widget(self.aim_line)
+
+    def remove_black_hole(self, black_hole):
+        self.black_holes.remove(black_hole)
+        self.remove_widget(black_hole)
+
+    def remove_goal_point(self, goal_point):
+        self.goal_points.remove(goal_point)
+        self.remove_widget(goal_point)
+
+    def remove_shot(self, shot):
+        self.remove_widget(shot)
+        self.shots.remove(shot)
 
     def tick(self, dt):
         for shot1, shot2 in itertools.combinations(self.shots, 2):
