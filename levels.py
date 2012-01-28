@@ -19,4 +19,19 @@ class First(object):
             fling_board.goal_points.append(goal_point)
 
 
-levels = [First]
+class LongShot(object):
+    name = "long shot"
+
+    def load(self, fling_board):
+        top_height = fling_board.height * .8
+        bottom_height = fling_board.height * .2
+        left_x = fling_board.width * .4
+        right_x = fling_board.width * .6
+        first_goal_point = GoalPoint(pos=(left_x, top_height))
+        second_goal_point = GoalPoint(pos=(right_x, bottom_height))
+        for goal_point in (first_goal_point, second_goal_point):
+            fling_board.add_widget(goal_point)
+            fling_board.goal_points.append(goal_point)
+
+
+levels = [First, LongShot]
