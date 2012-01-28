@@ -156,6 +156,8 @@ class FlingBoard(Widget):
             shot.move()
 
         for goal_point in self.goal_points:
+            goal_point.move()
+
             for shot in self.shots:
                 if goal_point.collide_point(*shot.pos):
                     self.remove_widget(goal_point)

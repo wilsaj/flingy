@@ -5,7 +5,7 @@ import itertools
 from random import random
 
 from kivy.clock import Clock
-from kivy.properties import BooleanProperty, ListProperty, NumericProperty
+from kivy.properties import BooleanProperty, ListProperty, NumericProperty, ReferenceListProperty
 from kivy.vector import Vector
 from kivy.uix.widget import Widget
 
@@ -34,6 +34,9 @@ class BlackHole(Widget):
 
 class GoalPoint(Widget):
     r = NumericProperty(10.)
+    velocity_x = NumericProperty(0)
+    velocity_y = NumericProperty(0)
+    velocity = ReferenceListProperty(velocity_x, velocity_y)
 
     def __init__(self, **kwargs):
         super(GoalPoint, self).__init__(**kwargs)
@@ -41,6 +44,10 @@ class GoalPoint(Widget):
     def collide_point(self, x, y):
         if (Vector(x, y) - Vector(self.pos)).length() < self.r:
             return True
+
+    def move(self):
+        self.x += self.velocity_x
+        self.y += self.velocity_y
 
 
 class Rocket(Widget):
