@@ -1,6 +1,7 @@
 """module that holds all the levels"""
 
 from kivy.clock import Clock
+from kivy.vector import Vector
 
 from widgets import AimLine, BlackHole, GoalPoint, Rocket, Shot, Stars
 
@@ -86,5 +87,25 @@ class TwoTimedTwo(object):
         return change_func
 
 
+class OrbitIt(object):
+    name = "orbit it"
 
-levels = [First, LongShot, TwoTimed, TwoTimedTwo]
+    def load(self, fling_board):
+        num_points = 24
+        r = 250
+        center_x = fling_board.width / 2.
+        center_y = fling_board.height / 2.
+
+        black_hole = BlackHole(pos=(center_x, center_y))
+        fling_board.add_black_hole(black_hole)
+
+        v = Vector(r, 0)
+        rotation_angle = 360. / num_points
+        for i in range(num_points):
+            goal_point = GoalPoint(pos=(center_x + v.x, center_y + v.y))
+            fling_board.add_goal_point(goal_point)
+            v = v.rotate(rotation_angle)
+
+
+
+levels = [First, LongShot, TwoTimed, TwoTimedTwo, OrbitIt]
