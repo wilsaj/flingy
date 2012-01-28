@@ -202,7 +202,7 @@ class FlingyApp(App):
 
 def circles_collide(widget_1, widget_2):
     widget_distance = Vector(widget_1.pos).distance(Vector(widget_2.pos))
-    radial_distance = (widget_1.d + widget_2.d) / 2.
+    radial_distance = widget_1.r + widget_2.r
     return widget_distance < radial_distance
 
 

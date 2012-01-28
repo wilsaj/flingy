@@ -21,14 +21,14 @@ class AimLine(Widget):
 
 
 class BlackHole(Widget):
-    d = NumericProperty(50.)
+    r = NumericProperty(25.)
     mass = NumericProperty(50.)
 
     def __init__(self, **kwargs):
         super(BlackHole, self).__init__(**kwargs)
 
     def collide_point(self, x, y):
-        if (Vector(x, y) - Vector(self.pos)).length() < self.d / 2.:
+        if (Vector(x, y) - Vector(self.pos)).length() < self.r:
             return True
 
 
@@ -95,7 +95,7 @@ class Rocket(Widget):
 
 
 class Shot(Widget):
-    d = NumericProperty(10.)
+    r = NumericProperty(5.)
     mass = NumericProperty(1.)
     motion_v = ListProperty([0, 0])
 
