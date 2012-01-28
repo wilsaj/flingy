@@ -42,6 +42,17 @@ class BlackHole(Widget):
             return True
 
 
+class GoalPoint(Widget):
+    r = NumericProperty(10.)
+
+    def __init__(self, **kwargs):
+        super(GoalPoint, self).__init__(**kwargs)
+
+    def collide_point(self, x, y):
+        if (Vector(x, y) - Vector(self.pos)).length() < self.r:
+            return True
+
+
 class Rocket(Widget):
     l = NumericProperty(20.)
     w = NumericProperty(8.)
@@ -135,6 +146,7 @@ class FlingBoard(Widget):
         self.black_holes = []
         self.shots = []
         self.rockets = []
+        self.goal_points = []
         Window.clearcolor = (0.1, 0.1, 0.1, 1.)
         Clock.schedule_once(self.add_stars, -1)
         Clock.schedule_interval(self.tick, 1 / 60.)
@@ -145,14 +157,22 @@ class FlingBoard(Widget):
 
     def on_touch_down(self, touch):
         if touch.is_double_tap:
-            for black_hole in self.black_holes:
-                if black_hole.collide_point(*touch.pos):
-                    self.remove_widget(black_hole)
-                    self.black_holes.remove(black_hole)
+            # for black_hole in self.black_holes:
+            #     if black_hole.collide_point(*touch.pos):
+            #         self.remove_widget(black_hole)
+            #         self.black_holes.remove(black_hole)
+            #         return True
+            # black_hole = BlackHole(pos=touch.pos)
+            # self.add_widget(black_hole)
+            # self.black_holes.append(black_hole)
+            for goal_point in self.goal_points:
+                if goal_point.collide_point(*touch.pos):
+                    self.remove_widget(goal_point)
+                    self.goal_points.remove(goal_point)
                     return True
-            black_hole = BlackHole(pos=touch.pos)
-            self.add_widget(black_hole)
-            self.black_holes.append(black_hole)
+            goal_point = GoalPoint(pos=touch.pos)
+            self.add_widget(goal_point)
+            self.goal_points.append(goal_point)
         self.aim_line = AimLine(touch.pos)
         self.add_widget(self.aim_line)
         return True
@@ -174,12 +194,13 @@ class FlingBoard(Widget):
             return
         motion_v /= math.sqrt(l)
 
-        # shot = Shot(motion_v=motion_v, pos=(touch.x, touch.y))
-        # self.add_widget(shot)
-        # self.shots.append(shot)
-        rocket = Rocket(motion_v=motion_v, pos=(touch.x, touch.y))
-        self.add_widget(rocket)
-        self.rockets.append(rocket)
+        shot = Shot(motion_v=motion_v, pos=(touch.x, touch.y))
+        self.add_widget(shot)
+        self.shots.append(shot)
+
+        # rocket = Rocket(motion_v=motion_v, pos=(touch.x, touch.y))
+        # self.add_widget(rocket)
+        # self.rockets.append(rocket)
 
         self.remove_widget(self.aim_line)
 
@@ -195,6 +216,16 @@ class FlingBoard(Widget):
                     self.remove_widget(shot)
                     self.shots.remove(shot)
             shot.move()
+
+        for goal_point in self.goal_points:
+            for shot in self.shots:
+                if goal_point.collide_point(*shot.pos):
+                    self.remove_widget(goal_point)
+                    self.goal_points.remove(goal_point)
+
+                    if len(self.goal_points) == 0:
+                        print "DONE"
+                    continue
 
         for rocket in self.rockets:
             for black_hole in self.black_holes:
