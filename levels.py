@@ -107,5 +107,33 @@ class OrbitIt(object):
             v = v.rotate(rotation_angle)
 
 
+class GoFigure(object):
+    name = "go figure"
 
-levels = [First, LongShot, TwoTimed, TwoTimedTwo, OrbitIt]
+    def load(self, fling_board):
+        num_points = 24
+        r = 250
+        center_x = fling_board.width / 2.
+        center_y = fling_board.height / 2.
+        left_x = fling_board.width * .3
+        right_x = fling_board.width * .7
+        m = center_x - left_x
+
+        left_hole = BlackHole(pos=(left_x, center_y))
+        fling_board.add_black_hole(left_hole)
+
+        right_hole = BlackHole(pos=(right_x, center_y))
+        fling_board.add_black_hole(right_hole)
+
+        point_positions = [
+            (left_x - m, center_y),
+            (center_x, center_y),
+            (right_x + m, center_y),
+        ]
+
+        for pos in point_positions:
+            goal_point = GoalPoint(pos=pos)
+            fling_board.add_goal_point(goal_point)
+
+
+levels = [First, LongShot, TwoTimed, TwoTimedTwo, OrbitIt, GoFigure]
