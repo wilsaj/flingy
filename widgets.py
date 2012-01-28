@@ -33,7 +33,7 @@ class BlackHole(Widget):
 
 
 class GoalPoint(Widget):
-    r = NumericProperty(10.)
+    r = NumericProperty(5.)
     velocity_x = NumericProperty(0)
     velocity_y = NumericProperty(0)
     velocity = ReferenceListProperty(velocity_x, velocity_y)
@@ -95,7 +95,7 @@ class Rocket(Widget):
 
 
 class Shot(Widget):
-    r = NumericProperty(5.)
+    r = NumericProperty(10.)
     mass = NumericProperty(1.)
     motion_v = ListProperty([0, 0])
 
