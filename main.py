@@ -62,6 +62,7 @@ class Rocket(Widget):
     boost = BooleanProperty(False)
     quad_points = ListProperty([0, 0, 0, 0, 0, 0, 0, 0])
     # tip_points = ListProperty([0, 0, 0, 0, 0, 0])
+
     def __init__(self, **kwargs):
         super(Rocket, self).__init__(**kwargs)
 
@@ -136,24 +137,47 @@ class Stars(Widget):
                     for i in xrange(number_of_stars / 50)]))
 
 
+import levels
+
+
 class FlingBoard(Widget):
     """
-    Main application widget, takes all the touches.
+    Main application widget, takes all the touches and turns them into
+    fun.
     """
     def __init__(self, *args, **kwargs):
         super(FlingBoard, self).__init__()
+        self.clear_level()
+        Window.clearcolor = (0.1, 0.1, 0.1, 1.)
+        Clock.schedule_once(self.add_stars, -1)
+        Clock.schedule_interval(self.tick, 1 / 60.)
+        self._keyboard = Window.request_keyboard(
+            None, self)
+        self._keyboard.bind(on_key_down=self._on_keyboard_down)
+
+    def _on_keyboard_down(self, keyboard, keycode, text, modifiers):
+        try:
+            level_index = int(text)
+            print "loading level %s..." % (level_index)
+            self.load_level(level_index)
+            return True
+        except ValueError:
+            pass
+
+    def add_stars(self, dt):
+        self.stars = Stars(2000)
+        self.add_widget(self.stars)
+
+    def clear_level(self):
         self.aim_line = None
         self.black_holes = []
         self.shots = []
         self.rockets = []
         self.goal_points = []
-        Window.clearcolor = (0.1, 0.1, 0.1, 1.)
-        Clock.schedule_once(self.add_stars, -1)
-        Clock.schedule_interval(self.tick, 1 / 60.)
 
-    def add_stars(self, dt):
-        self.stars = Stars(2000)
-        self.add_widget(self.stars)
+    def load_level(self, level_index):
+        level = levels.levels[level_index]()
+        level.load(self)
 
     def on_touch_down(self, touch):
         if touch.is_double_tap:
