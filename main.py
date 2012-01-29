@@ -34,10 +34,11 @@ class FlingBoard(Widget):
         self._keyboard.bind(on_key_down=self._on_keyboard_down)
         self.aim_line = None
         self.black_holes = []
-        self.shots = []
-        self.rockets = []
-        self.goal_points = []
         self.level_label = None
+        self.goal_points = []
+        self.rockets = []
+        self.shots = []
+        self.walls = []
 
     def _on_keyboard_down(self, keyboard, keycode, text, modifiers):
         try:
@@ -64,6 +65,10 @@ class FlingBoard(Widget):
         self.stars = Stars(2000)
         self.add_widget(self.stars)
 
+    def add_wall(self, wall):
+        self.walls.append(wall)
+        self.add_widget(wall)
+
     def clear_level(self):
         if self.aim_line:
             self.remove_widget(self.aim_line)
@@ -79,6 +84,10 @@ class FlingBoard(Widget):
         for goal_point in self.goal_points:
             self.remove_widget(goal_point)
         self.goal_points = []
+
+        for wall in self.walls:
+            self.remove_widget(wall)
+        self.walls = []
 
         if self.level_label:
             self.remove_widget(self.level_label)
@@ -165,6 +174,8 @@ class FlingBoard(Widget):
         for shot1, shot2 in itertools.combinations(self.shots, 2):
             if circles_collide(shot1, shot2):
                 shots_collide(shot1, shot2)
+                shot1.last_bounced = None
+                shot2.last_bounced = None
 
         for shot in self.shots:
             for black_hole in self.black_holes:
@@ -172,6 +183,9 @@ class FlingBoard(Widget):
                 if circles_collide(shot, black_hole):
                     self.remove_widget(shot)
                     self.shots.remove(shot)
+            for wall in self.walls:
+                if shot.collide_wall(wall):
+                    print "collide"
             shot.move()
 
         for goal_point in self.goal_points:

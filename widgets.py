@@ -112,6 +112,65 @@ class Shot(Widget):
         g_v = Vector(body.pos) - Vector(self.pos)
         self.motion_v = m_v + (g_v * 1. / g_v.length2()) * body.mass
 
+    def collide_wall(self, wall):
+        if hasattr(self, 'last_bounced') and self.last_bounced == wall:
+            return
+
+        deflect_edge = None
+        m_v = Vector(self.motion_v)
+        pos_v = Vector(self.pos)
+
+        edge_points = zip(wall.quad_points[0::2], wall.quad_points[1::2])
+        edges = [
+            (edge_points[0], edge_points[1]),
+            (edge_points[1], edge_points[2]),
+            (edge_points[2], edge_points[3]),
+            (edge_points[3], edge_points[0]),
+            ]
+
+        closest_point = None
+
+        for point in edge_points:
+            if (pos_v - Vector(point)).length() < self.r:
+                if not closest_point or \
+                   (pos_v - Vector(point)).length() < (Vector(closest_point) - Vector(point)).length():
+                    closest_point = point
+
+        if closest_point:
+            # take the deflection edge to be the normal of here to the corner
+            deflect_edge = (pos_v - Vector(point)).rotate(90)
+
+        else:
+            for edge in edges:
+                e0 = Vector(edge[0])
+                e1 = Vector(edge[1])
+
+                ortho_v = (e0 - e1).rotate(90).normalize()
+                dist_v = Vector.line_intersection(self.pos, pos_v + ortho_v,
+                                                  edge[0], edge[1])
+
+                # dist_v will be None if we happen to be parallel
+                if not dist_v:
+                    continue
+
+                dist_from_edge = (pos_v - dist_v).length()
+
+                # if the shot touches the wall here
+                if min(e0[0], e1[0]) <= dist_v[0] <= max(e0[0], e1[0]) and \
+                   min(e0[1], e1[1]) <= dist_v[1] <= max(e0[1], e1[1]) and \
+                   dist_from_edge < self.r + (wall.thickness / 2.):
+                    if not deflect_edge:
+                        deflect_edge = e0 - e1
+                        dist_from_deflect_edge = dist_from_edge
+
+                    elif dist_from_edge < dist_from_deflect_edge:
+                        deflect_edge = e0 - e1
+                        dist_from_deflect_edge = dist_from_edge
+
+        if deflect_edge:
+            self.motion_v = m_v.rotate(-2 * m_v.angle(deflect_edge))
+            self.last_bounced = wall
+
 
 class Stars(Widget):
     points = ListProperty([(0, 0), (0, 0), (0, 0)])
@@ -132,3 +191,28 @@ class Stars(Widget):
         self.points[2] = list(itertools.chain(*[
                     (random() * width, random() * height)
                     for i in xrange(number_of_stars / 50)]))
+
+
+class Wall(Widget):
+    start_point = ListProperty([0, 0])
+    end_point = ListProperty([0, 0])
+    thickness = NumericProperty(4.)
+    quad_points = ListProperty([0, 0, 0, 0, 0, 0, 0, 0])
+
+    def __init__(self, start_point, end_point, **kwargs):
+        super(Wall, self).__init__(**kwargs)
+        self.start_point = start_point
+        self.end_point = end_point
+        self.update_points()
+
+    def update_points(self):
+        v = Vector(self.start_point[0] - self.end_point[0],
+                   self.start_point[1] - self.end_point[1])
+        # orthogonal vector
+        o_v = v.normalize().rotate(90) * self.thickness / 2.
+        self.quad_points = [
+            self.start_point[0] + o_v[0], self.start_point[1] + o_v[1],
+            self.start_point[0] - o_v[0], self.start_point[1] - o_v[1],
+            self.end_point[0] - o_v[0], self.end_point[1] - o_v[1],
+            self.end_point[0] + o_v[0], self.end_point[1] + o_v[1],
+        ]
