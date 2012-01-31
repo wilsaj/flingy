@@ -3,7 +3,7 @@
 from kivy.clock import Clock
 from kivy.vector import Vector
 
-from widgets import AimLine, BlackHole, GoalPoint, Rocket, Shot, Stars, Wall
+from widgets import AimLine, BlackHole, GoalPoint, Shot, Stars, Wall
 
 
 class First(object):
