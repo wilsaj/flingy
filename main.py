@@ -75,27 +75,15 @@ class FlingBoard(Widget):
         self.add_widget(wall)
 
     def clear_level(self):
-        if self.aim_line:
-            self.remove_widget(self.aim_line)
+        if hasattr(self, 'menu') and self.menu:
+            self.menu.clear_widgets()
 
-        for black_hole in self.black_holes:
-            self.remove_widget(black_hole)
         self.black_holes = []
-
-        for shot in self.shots:
-            self.remove_widget(shot)
-        self.shots = []
-
-        for goal_point in self.goal_points:
-            self.remove_widget(goal_point)
         self.goal_points = []
-
-        for wall in self.walls:
-            self.remove_widget(wall)
+        self.shots = []
         self.walls = []
-
-        if self.level_label:
-            self.remove_widget(self.level_label)
+        self.clear_widgets()
+        self.add_stars()
 
     def load_level(self, level_index):
         self.clear_level()
