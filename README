@@ -1,0 +1,5 @@
+flingy is a game where you toss things around. In space.
+
+to play, install kivy and then run:
+
+  python main.py

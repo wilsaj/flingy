@@ -13,8 +13,8 @@ from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.label import Label
 from kivy.uix.widget import Widget
 
-from widgets import AimLine, BlackHole, GoalPoint, Rocket, Shot, Stars
-import levels
+from widgets import AimLine, BlackHole, GoalPoint, MainMenu, Rocket, Shot, Stars
+from levels import levels
 
 kivy.require('1.0.9')
 
@@ -27,25 +27,29 @@ class FlingBoard(Widget):
     def __init__(self, *args, **kwargs):
         super(FlingBoard, self).__init__()
         Window.clearcolor = (0.1, 0.1, 0.1, 1.)
-        Clock.schedule_once(self.add_stars, -1)
         Clock.schedule_interval(self.tick, 1 / 60.)
         self._keyboard = Window.request_keyboard(
             None, self)
         self._keyboard.bind(on_key_down=self._on_keyboard_down)
         self.aim_line = None
         self.black_holes = []
+        self.buttons = []
+        self.current_level = None
         self.level_label = None
         self.goal_points = []
         self.rockets = []
         self.shots = []
         self.walls = []
 
+        # schedule rather than call directly init, so that width and
+        # height are finished initializing
+        Clock.schedule_once(self.display_main_menu)
+
     def _on_keyboard_down(self, keyboard, keycode, text, modifiers):
         try:
             level_index = int(text)
             print "loading level %s..." % (level_index)
-            self.load_level(level_index)
-            return True
+            self.load_level(levels[level_index])
         except ValueError:
             pass
 
@@ -61,7 +65,7 @@ class FlingBoard(Widget):
         self.shots.append(shot)
         self.add_widget(shot)
 
-    def add_stars(self, dt):
+    def add_stars(self):
         self.stars = Stars(2000)
         self.add_widget(self.stars)
 
@@ -70,34 +74,26 @@ class FlingBoard(Widget):
         self.add_widget(wall)
 
     def clear_level(self):
-        if self.aim_line:
-            self.remove_widget(self.aim_line)
+        if hasattr(self, 'menu') and self.menu:
+            self.menu.clear_widgets()
 
-        for black_hole in self.black_holes:
-            self.remove_widget(black_hole)
         self.black_holes = []
-
-        for shot in self.shots:
-            self.remove_widget(shot)
-        self.shots = []
-
-        for goal_point in self.goal_points:
-            self.remove_widget(goal_point)
         self.goal_points = []
-
-        for wall in self.walls:
-            self.remove_widget(wall)
+        self.shots = []
         self.walls = []
+        self.clear_widgets()
+        self.add_stars()
 
-        if self.level_label:
-            self.remove_widget(self.level_label)
-
-    def load_level(self, level_index):
+    def load_level(self, level):
         self.clear_level()
-        level = levels.levels[level_index]()
         level.load(self)
+        level_index = levels.index(level)
         level_text = "level %s: %s" % (level_index + 1, level.name)
+        self.current_level = level
         self.display_level_text(level_text)
+
+    def restart_level(self, *args):
+        self.load_level(self.current_level)
 
     def display_level_text(self, level_text):
         self.level_label = Label(
@@ -109,24 +105,62 @@ class FlingBoard(Widget):
             Animation(color=(1, 1, 1, 0), duration=2.)
         anim.start(self.level_label)
 
+    def display_instructions(self, button):
+        instructions_text = """ 
+you can shoot things by dragging your finger
+or mouse across the screen
+ 
+for each level, collect all the goal points
+ 
+double tap to screen at any time to bring up the menu"""
+        instructions_label = Label(
+            text=instructions_text, font_size=20, width=self.width * .8,
+            x=self.width * .1, y=self.height - 200, color=(1., 1., 1., 0.))
+        self.add_widget(instructions_label)
+        anim = Animation(color=(1, 1, 1, 1), duration=2.)
+        anim.start(instructions_label)
+
+    def display_main_menu(self, *args):
+        self.clear_level()
+
+        layout_width = self.width * .2
+        layout_x = self.width * .4
+        layout_y = self.height * .2
+
+        self.menu = MainMenu(self, x=layout_x, y=layout_y, width=layout_width,
+                             current_level=self.current_level)
+        self.add_widget(self.menu)
+
+    def end_game(self, *args):
+        end_game_text = """ 
+thanks for playing
+ 
+you've mastered all the levels we've got for now, but
+check back soon for more levels and updates"""
+        end_game_label = Label(
+            text=end_game_text, font_size=20, width=self.width * .8,
+            x=self.width * .1, y=self.height - 200, color=(1., 1., 1., 0.))
+        self.add_widget(end_game_label)
+        anim = Animation(color=(1, 1, 1, 1), duration=2.)
+        anim.start(end_game_label)
+
+
+    def next_level(self, *args):
+        next_level_index = levels.index(self.current_level) + 1
+        if next_level_index < len(levels):
+            self.load_level(levels[next_level_index])
+        else:
+            Clock.schedule_once(self.end_game, 2.)
+
     def on_touch_down(self, touch):
+        if hasattr(self, 'menu') and self.menu.collide_point(*touch.pos):
+            for child in self.menu.children:
+                if child.collide_point(*touch.pos):
+                    child.dispatch('on_touch_down', touch)
+
         if touch.is_double_tap:
-            # for black_hole in self.black_holes:
-            #     if black_hole.collide_point(*touch.pos):
-            #         self.remove_widget(black_hole)
-            #         self.black_holes.remove(black_hole)
-            #         return True
-            # black_hole = BlackHole(pos=touch.pos)
-            # self.add_widget(black_hole)
-            # self.black_holes.append(black_hole)
-            for goal_point in self.goal_points:
-                if goal_point.collide_point(*touch.pos):
-                    self.remove_widget(goal_point)
-                    self.goal_points.remove(goal_point)
-                    return True
-            goal_point = GoalPoint(pos=touch.pos)
-            self.add_widget(goal_point)
-            self.goal_points.append(goal_point)
+            self.display_main_menu()
+
         self.aim_line = AimLine(touch.pos)
         self.add_widget(self.aim_line)
         return True
@@ -170,6 +204,9 @@ class FlingBoard(Widget):
         self.remove_widget(shot)
         self.shots.remove(shot)
 
+    def start_game(self, button):
+        self.load_level(levels[0])
+
     def tick(self, dt):
         for shot1, shot2 in itertools.combinations(self.shots, 2):
             if circles_collide(shot1, shot2):
@@ -197,7 +234,7 @@ class FlingBoard(Widget):
                     self.goal_points.remove(goal_point)
 
                     if len(self.goal_points) == 0:
-                        print "DONE"
+                        Clock.schedule_once(self.next_level, 1)
                     continue
 
         for rocket in self.rockets:
