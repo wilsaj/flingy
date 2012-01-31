@@ -179,4 +179,33 @@ class Wally(object):
                           y=goals_center_y - (num_rows - i) * goals_offset_y))
 
 
-levels = [First, LongShot, TwoTimed, TwoTimedTwo, OrbitIt, GoFigure, Wally]
+class HopSkip(object):
+    name = "hopskip"
+    max_shots = 1
+
+    @classmethod
+    def load(self, fling_board):
+        wall_width = 100
+
+        for hop_scale in [.2, .5, .8]:
+            hop_x = fling_board.width * hop_scale
+            fling_board.add_black_hole(BlackHole(
+                pos=(hop_x, 200)))
+
+            fling_board.add_wall(Wall(
+                start_point=(hop_x - 50, 275),
+                end_point=(hop_x + 50, 275)))
+
+            fling_board.add_goal_point(GoalPoint(
+                pos=(hop_x, 325)))
+
+levels = [
+    First,
+    LongShot,
+    TwoTimed,
+    TwoTimedTwo,
+    OrbitIt,
+    GoFigure,
+    Wally,
+    HopSkip
+]
