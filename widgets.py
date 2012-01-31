@@ -7,6 +7,8 @@ from random import random
 from kivy.clock import Clock
 from kivy.properties import BooleanProperty, ListProperty, NumericProperty, ReferenceListProperty
 from kivy.vector import Vector
+from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.button import Button
 from kivy.uix.widget import Widget
 
 
@@ -48,6 +50,24 @@ class GoalPoint(Widget):
     def move(self):
         self.x += self.velocity_x
         self.y += self.velocity_y
+
+
+class MainMenu(BoxLayout):
+    def __init__(self, fling_board, current_level=0, **kwargs):
+        super(MainMenu, self).__init__(**kwargs)
+
+        start_button = Button(text='start new game')
+        start_button.bind(on_release=fling_board.start_game)
+        self.add_widget(start_button)
+
+        if current_level:
+            restart_level_button = Button(text='restart level')
+            restart_level_button.bind(on_release=fling_board.restart_level)
+            self.add_widget(restart_level_button)
+
+        instruction_button = Button(text='instructions')
+        instruction_button.bind(on_press=fling_board.display_instructions)
+        self.add_widget(instruction_button)
 
 
 class Rocket(Widget):

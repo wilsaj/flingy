@@ -20,6 +20,7 @@
             size: (self.r * 2., self.r * 2.)
 
 
+
 <GoalPoint>:
     canvas:
         Color:
@@ -29,12 +30,19 @@
             size: (self.r * 2., self.r * 2.)
 
 
+<MainMenu>:
+    orientation: 'vertical'
+    spacing: 20
+    height: len(self.children) * 70.
+
+
 <Rocket>:
     canvas:
         Color:
             rgb: .7, .7, .7
         Quad:
             points: self.quad_points
+
 
 <Shot>:
     canvas:
@@ -43,6 +51,7 @@
         Ellipse:
             pos: (self.x - self.r, self.y - self.r)
             size: (self.r * 2., self.r * 2.)
+
 
 <Stars>:
     canvas:
@@ -57,6 +66,7 @@
         Point:
             points: self.points[2]
             pointsize: 1
+
 
 <Wall>:
     canvas:

@@ -13,8 +13,8 @@ from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.label import Label
 from kivy.uix.widget import Widget
 
-from widgets import AimLine, BlackHole, GoalPoint, Rocket, Shot, Stars
 import levels
+from widgets import AimLine, BlackHole, GoalPoint, MainMenu, Rocket, Shot, Stars
 
 kivy.require('1.0.9')
 
@@ -34,11 +34,16 @@ class FlingBoard(Widget):
         self._keyboard.bind(on_key_down=self._on_keyboard_down)
         self.aim_line = None
         self.black_holes = []
+        self.current_level = 0
         self.level_label = None
         self.goal_points = []
         self.rockets = []
         self.shots = []
         self.walls = []
+
+        # schedule rather than call directly init, so that width and
+        # height are finished initializing
+        Clock.schedule_once(self.display_main_menu)
 
     def _on_keyboard_down(self, keyboard, keycode, text, modifiers):
         try:
@@ -97,7 +102,11 @@ class FlingBoard(Widget):
         level = levels.levels[level_index]()
         level.load(self)
         level_text = "level %s: %s" % (level_index + 1, level.name)
+        self.current_level = level_index
         self.display_level_text(level_text)
+
+    def restart_level(self, *args):
+        self.load_level(self.current_level)
 
     def display_level_text(self, level_text):
         self.level_label = Label(
@@ -109,7 +118,37 @@ class FlingBoard(Widget):
             Animation(color=(1, 1, 1, 0), duration=2.)
         anim.start(self.level_label)
 
+    def display_instructions(self, button):
+        instructions_text = """ 
+you can shoot things by dragging your finger
+or mouse across the screen
+ 
+for each level, collect all the goal points
+ 
+double tap to screen at any time to bring up the menu"""
+        instructions_label = Label(
+            text=instructions_text, font_size=20, width=self.width * .8,
+            x=self.width * .1, y=self.height - 200, color=(1., 1., 1., 0.))
+        self.add_widget(instructions_label)
+        anim = Animation(color=(1, 1, 1, 1), duration=2.)
+        anim.start(instructions_label)
+
+    def display_main_menu(self, *args):
+        self.clear_level()
+
+        layout_width = self.width * .2
+        layout_x = self.width * .4
+        layout_y = self.height * .2
+
+        self.menu = MainMenu(self, x=layout_x, y=layout_y, width=layout_width,
+                             current_level=self.current_level)
+        self.add_widget(self.menu)
     def on_touch_down(self, touch):
+        if hasattr(self, 'menu') and self.menu.collide_point(*touch.pos):
+            for child in self.menu.children:
+                if child.collide_point(*touch.pos):
+                    child.dispatch('on_touch_down', touch)
+
         if touch.is_double_tap:
             # for black_hole in self.black_holes:
             #     if black_hole.collide_point(*touch.pos):
@@ -169,6 +208,9 @@ class FlingBoard(Widget):
     def remove_shot(self, shot):
         self.remove_widget(shot)
         self.shots.remove(shot)
+
+    def start_game(self, button):
+        self.load_level(0)
 
     def tick(self, dt):
         for shot1, shot2 in itertools.combinations(self.shots, 2):
