@@ -84,17 +84,6 @@ class FlingBoard(Widget):
         self.clear_widgets()
         self.add_stars()
 
-    def load_level(self, level):
-        self.clear_level()
-        level.load(self)
-        level_index = levels.index(level)
-        level_text = "level %s: %s" % (level_index + 1, level.name)
-        self.current_level = level
-        self.display_level_text(level_text)
-
-    def restart_level(self, *args):
-        self.load_level(self.current_level)
-
     def display_level_text(self, level_text):
         self.level_label = Label(
             text=level_text, font_size=20, width=self.width, halign='center',
@@ -144,6 +133,13 @@ check back soon for more levels and updates"""
         anim = Animation(color=(1, 1, 1, 1), duration=2.)
         anim.start(end_game_label)
 
+    def load_level(self, level):
+        self.clear_level()
+        level.load(self)
+        level_index = levels.index(level)
+        level_text = "level %s: %s" % (level_index + 1, level.name)
+        self.current_level = level
+        self.display_level_text(level_text)
 
     def next_level(self, *args):
         next_level_index = levels.index(self.current_level) + 1
@@ -203,6 +199,9 @@ check back soon for more levels and updates"""
     def remove_shot(self, shot):
         self.remove_widget(shot)
         self.shots.remove(shot)
+
+    def restart_level(self, *args):
+        self.load_level(self.current_level)
 
     def start_game(self, button):
         self.load_level(levels[0])
