@@ -133,10 +133,10 @@ double tap to screen at any time to bring up the menu"""
 
     def end_game(self, *args):
         end_game_text = """ 
-thanks for playing flingy
+thanks for playing
  
-you've beat all the levels we've got for today, but
-check back for more levels soon"""
+you've mastered all the levels we've got for now, but
+check back soon for more levels and updates"""
         end_game_label = Label(
             text=end_game_text, font_size=20, width=self.width * .8,
             x=self.width * .1, y=self.height - 200, color=(1., 1., 1., 0.))
