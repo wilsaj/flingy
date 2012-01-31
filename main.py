@@ -116,10 +116,13 @@ class FlingBoard(Widget):
 
     def display_instructions(self, button):
         instructions_text = """ 
-you can shoot things by dragging your finger
-or mouse across the screen
+for each level, the goal is to shoot an asteroid that
+touches all the blue goal points
  
-for each level, collect all the goal points
+touch and drag to aim an asteroid, release to shoot it
+ 
+you have a limited number of shots per level; you'll
+need to restart the level if you run out
  
 double tap to screen at any time to bring up the menu"""
         instructions_label = Label(
@@ -134,7 +137,7 @@ double tap to screen at any time to bring up the menu"""
 
         layout_width = self.width * .2
         layout_x = self.width * .4
-        layout_y = self.height * .2
+        layout_y = self.height * .1
 
         self.menu = MainMenu(self, x=layout_x, y=layout_y, width=layout_width,
                              current_level=self.current_level)
