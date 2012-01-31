@@ -118,11 +118,11 @@ class FlingBoard(Widget):
     def display_instructions(self, button):
         instructions_text = """ 
 for each level, the goal is to shoot an asteroid that
-touches all the blue goal points
+touches all the blue dots
  
 touch and drag to aim an asteroid, release to shoot it
  
-you have a limited number of shots per level; you'll
+you have a limited number of shots per level, you'll
 need to restart the level if you run out
  
 double tap to screen at any time to bring up the menu"""
