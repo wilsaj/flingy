@@ -216,3 +216,8 @@ class Wall(Widget):
             self.end_point[0] - o_v[0], self.end_point[1] - o_v[1],
             self.end_point[0] + o_v[0], self.end_point[1] + o_v[1],
         ]
+
+        self.x = min(self.quad_points[::2]) - self.thickness
+        self.y = min(self.quad_points[1::2]) - self.thickness
+        self.width = max(self.quad_points[::2]) - min(self.quad_points[::2]) + 2 * self.thickness
+        self.height = max(self.quad_points[1::2]) - min(self.quad_points[1::2]) + 2 * self.thickness
