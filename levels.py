@@ -3,7 +3,7 @@
 from kivy.clock import Clock
 from kivy.vector import Vector
 
-from widgets import AimLine, BlackHole, GoalPoint, Rocket, Shot, Stars
+from widgets import AimLine, BlackHole, GoalPoint, Rocket, Shot, Stars, Wall
 
 
 class First(object):
@@ -136,4 +136,31 @@ class GoFigure(object):
             fling_board.add_goal_point(goal_point)
 
 
-levels = [First, LongShot, TwoTimed, TwoTimedTwo, OrbitIt, GoFigure]
+class Wally(object):
+    name = "wally"
+
+    def load(self, fling_board):
+        wall_x = fling_board.width * .7
+        wall_top_y = fling_board.height * .6
+        wall_bottom_y = fling_board.height * .4
+
+        wall = Wall(start_point=[wall_x, wall_top_y],
+                    end_point=[wall_x, wall_bottom_y])
+        fling_board.add_wall(wall)
+
+        goals_start_x = fling_board.width * .45
+        goals_offset_x = fling_board.width * .05
+        goals_center_y = fling_board.height * .5
+        goals_offset_y = fling_board.height * .05
+
+        num_rows = 5
+        for i in xrange(num_rows):
+            fling_board.add_goal_point(
+                GoalPoint(x=goals_start_x + i * goals_offset_x,
+                          y=goals_center_y + (num_rows - i) * goals_offset_y))
+            fling_board.add_goal_point(
+                GoalPoint(x=goals_start_x + i * goals_offset_x,
+                          y=goals_center_y - (num_rows - i) * goals_offset_y))
+
+
+levels = [First, LongShot, TwoTimed, TwoTimedTwo, OrbitIt, GoFigure, Wally]
