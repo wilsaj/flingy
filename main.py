@@ -82,13 +82,6 @@ class FlingBoard(Widget):
         self.shot_counter = shot_counter
         self.add_widget(shot_counter)
 
-    def new_background(self):
-        if self.stars:
-            self.remove_widget(self.stars)
-
-        self.stars = Stars(2000)
-        self.add_widget(self.stars)
-
     def add_wall(self, wall):
         self.walls.append(wall)
         self.add_widget(wall)
@@ -167,6 +160,13 @@ check back soon for more levels and updates"""
         self.display_level_text(level_text)
         self.add_shot_counter(ShotCounter(
             max_shots=level.max_shots, x=30, y=15))
+
+    def new_background(self):
+        if self.stars:
+            self.remove_widget(self.stars)
+
+        self.stars = Stars(2000)
+        self.add_widget(self.stars)
 
     def next_level(self, *args):
         next_level_index = levels.index(self.current_level) + 1
