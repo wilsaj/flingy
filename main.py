@@ -56,8 +56,9 @@ class FlingBoard(Widget):
     def _on_keyboard_down(self, keyboard, keycode, text, modifiers):
         try:
             level_index = int(text)
-            print "loading level %s..." % (level_index)
-            self.load_level(levels[level_index])
+            if level_index < len(levels):
+                print "loading level %s..." % (level_index)
+                self.load_level(levels[level_index])
         except ValueError:
             pass
 
