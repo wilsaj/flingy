@@ -55,6 +55,10 @@ class FlingBoard(Widget):
         except ValueError:
             pass
 
+    def add_aim_line(self, aim_line):
+        self.aim_line = (aim_line)
+        self.add_widget(aim_line)
+
     def add_black_hole(self, black_hole):
         self.black_holes.append(black_hole)
         self.add_widget(black_hole)
@@ -159,18 +163,23 @@ check back soon for more levels and updates"""
         if touch.is_double_tap:
             self.display_main_menu()
 
-        self.aim_line = AimLine(touch.pos)
-        self.add_widget(self.aim_line)
-        return True
+        if self.current_level and \
+           len(self.shots) < self.current_level.num_shots:
+            self.add_aim_line(AimLine(touch.pos))
 
     def on_touch_move(self, touch):
+        if not self.aim_line:
+            return
+
         try:
             self.aim_line.end_pt = touch.pos
-            return True
         except (KeyError), e:
             pass
 
     def on_touch_up(self, touch):
+        if not self.aim_line:
+            return
+
         start_v = Vector(self.aim_line.start_pt)
         end_v = Vector(self.aim_line.end_pt)
 
@@ -183,9 +192,15 @@ check back soon for more levels and updates"""
         if len(self.shots) > MAX_SHOTS:
             self.remove_shot(self.shots[0])
 
-        self.add_shot(Shot(velocity=velocity_v, pos=(touch.x, touch.y)))
+        if self.current_level and \
+           len(self.shots) < self.current_level.num_shots:
+            self.add_shot(Shot(velocity=velocity_v, pos=(touch.x, touch.y)))
 
-        self.remove_widget(self.aim_line)
+        self.remove_aim_line(self.aim_line)
+
+    def remove_aim_line(self, aim_line):
+        self.remove_widget(aim_line)
+        self.aim_line = None
 
     def remove_black_hole(self, black_hole):
         self.black_holes.remove(black_hole)
