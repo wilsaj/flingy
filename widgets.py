@@ -163,7 +163,7 @@ class ShotCounter(Label):
     max_shots = NumericProperty(1)
     format = StringProperty('shots: %s / %s')
 
-    def __init__(self, num_shots=0, max_shots=1, font_size=15, **kwargs):
+    def __init__(self, font_size=15, **kwargs):
         super(ShotCounter, self).__init__(**kwargs)
         self.font_size = font_size
         self.bind(num_shots=self.update_text)
