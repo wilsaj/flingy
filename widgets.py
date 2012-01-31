@@ -177,10 +177,8 @@ class Wall(Widget):
     thickness = NumericProperty(4.)
     quad_points = ListProperty([0, 0, 0, 0, 0, 0, 0, 0])
 
-    def __init__(self, start_point, end_point, **kwargs):
+    def __init__(self, **kwargs):
         super(Wall, self).__init__(**kwargs)
-        self.start_point = start_point
-        self.end_point = end_point
         self.update_points()
 
     def update_points(self):
