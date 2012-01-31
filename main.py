@@ -145,11 +145,11 @@ check back for more levels soon"""
         anim = Animation(color=(1, 1, 1, 1), duration=2.)
         anim.start(end_game_label)
 
+
     def next_level(self, *args):
         if self.current_level + 1 < len(levels):
             self.load_level(self.current_level + 1)
         else:
-            import pdb; pdb.set_trace()
             Clock.schedule_once(self.end_game, 2.)
 
     def on_touch_down(self, touch):
