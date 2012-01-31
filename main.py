@@ -27,13 +27,13 @@ class FlingBoard(Widget):
     def __init__(self, *args, **kwargs):
         super(FlingBoard, self).__init__()
         Window.clearcolor = (0.1, 0.1, 0.1, 1.)
-        Clock.schedule_once(self.add_stars, -1)
         Clock.schedule_interval(self.tick, 1 / 60.)
         self._keyboard = Window.request_keyboard(
             None, self)
         self._keyboard.bind(on_key_down=self._on_keyboard_down)
         self.aim_line = None
         self.black_holes = []
+        self.buttons = []
         self.current_level = 0
         self.level_label = None
         self.goal_points = []
@@ -66,7 +66,7 @@ class FlingBoard(Widget):
         self.shots.append(shot)
         self.add_widget(shot)
 
-    def add_stars(self, dt):
+    def add_stars(self):
         self.stars = Stars(2000)
         self.add_widget(self.stars)
 
