@@ -70,50 +70,6 @@ class MainMenu(BoxLayout):
         self.add_widget(instruction_button)
 
 
-class Rocket(Widget):
-    l = NumericProperty(20.)
-    w = NumericProperty(8.)
-    tip_l = NumericProperty(1.5)
-    tip_w = NumericProperty(1.5)
-    motion_v = ListProperty([0, 0])
-    boost = BooleanProperty(False)
-    quad_points = ListProperty([0, 0, 0, 0, 0, 0, 0, 0])
-    # tip_points = ListProperty([0, 0, 0, 0, 0, 0])
-
-    def __init__(self, **kwargs):
-        super(Rocket, self).__init__(**kwargs)
-
-    def update_points(self):
-        m_v = Vector(self.motion_v)
-        l_v = m_v.normalize() * self.l / 2.
-        # orthogonal vector
-        o_v = m_v.normalize().rotate(90) * self.w / 2.
-        self.quad_points = [self.x - (l_v + o_v)[0], self.y - (l_v + o_v)[1],
-                            self.x + (l_v - o_v)[0], self.y + (l_v - o_v)[1],
-                            self.x + (l_v + o_v)[0], self.y + (l_v + o_v)[1],
-                            self.x - (l_v - o_v)[0], self.y - (l_v - o_v)[1],
-                            ]
-
-        # self.tip_points = [
-        #     self.x + (l_v * self.tip_l)[0], self.y + (l_v * self.tip_l)[1],
-        #     self.x + (l_v + (o_v + Vector(self.tip_w, 0)))[0], self.y + (l_v + (o_v + Vector(self.tip_w, 0)))[1],
-        #     self.x + (l_v - (o_v - Vector(self.tip_w, 0)))[0], self.y + (l_v + (o_v - Vector(self.tip_w, 0)))[1],
-        #     ]
-
-    def move(self):
-        if self.boost:
-            m_v = Vector(self.motion_v)
-            self.motion_v = m_v + m_v.normalize()
-        self.x += self.motion_v[0]
-        self.y += self.motion_v[1]
-        self.update_points()
-
-    def gravitate_towards(self, body):
-        m_v = Vector(self.motion_v)
-        g_v = Vector(body.pos) - Vector(self.pos)
-        self.motion_v = m_v + (g_v * 1. / g_v.length2()) * body.mass
-
-
 class Shot(Widget):
     r = NumericProperty(10.)
     mass = NumericProperty(1.)

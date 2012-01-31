@@ -13,7 +13,7 @@ from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.label import Label
 from kivy.uix.widget import Widget
 
-from widgets import AimLine, BlackHole, GoalPoint, MainMenu, Rocket, Shot, Stars
+from widgets import AimLine, BlackHole, GoalPoint, MainMenu, Shot, Stars
 from levels import levels
 
 kivy.require('1.0.9')
@@ -40,7 +40,6 @@ class FlingBoard(Widget):
         self.current_level = None
         self.level_label = None
         self.goal_points = []
-        self.rockets = []
         self.shots = []
         self.walls = []
 
@@ -186,10 +185,6 @@ check back soon for more levels and updates"""
 
         self.add_shot(Shot(velocity=velocity_v, pos=(touch.x, touch.y)))
 
-        # rocket = Rocket(velocity_v=velocity_v, pos=(touch.x, touch.y))
-        # self.add_widget(rocket)
-        # self.rockets.append(rocket)
-
         self.remove_widget(self.aim_line)
 
     def remove_black_hole(self, black_hole):
@@ -239,14 +234,6 @@ check back soon for more levels and updates"""
                     if len(self.goal_points) == 0:
                         Clock.schedule_once(self.next_level, 1)
                     continue
-
-        for rocket in self.rockets:
-            for black_hole in self.black_holes:
-                rocket.gravitate_towards(black_hole)
-                if black_hole.collide_point(*rocket.pos):
-                    self.remove_widget(rocket)
-                    self.rockets.remove(rocket)
-            rocket.move()
 
 
 class FlingyApp(App):
