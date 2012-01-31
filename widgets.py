@@ -81,10 +81,13 @@ class Shot(Widget):
 
     def __init__(self, **kwargs):
         super(Shot, self).__init__(**kwargs)
+        self.last_bounced_ticks = 0
+        self.last_bounced_wall = None
 
     def move(self):
         self.x += self.velocity_x
         self.y += self.velocity_y
+        self.last_bounced_ticks += 1
 
     def gravitate_towards(self, body):
         velocity_v = Vector(self.velocity)
@@ -93,7 +96,9 @@ class Shot(Widget):
                         (gravity_v * 1. / gravity_v.length2()) * body.mass
 
     def collide_wall(self, wall):
-        if hasattr(self, 'last_bounced') and self.last_bounced == wall:
+        # don't collide with this wall if we just did so; this
+        # eliminates a huge class of weird behaviors
+        if self.last_bounced_wall == wall and self.last_bounced_ticks < 5:
             return
 
         deflect_edge = None
@@ -149,7 +154,8 @@ class Shot(Widget):
 
         if deflect_edge:
             self.velocity = velocity_v.rotate(-2 * velocity_v.angle(deflect_edge))
-            self.last_bounced = wall
+            self.last_bounced_wall = wall
+            self.last_bounced_ticks = 0
 
 
 class ShotCounter(Label):
