@@ -143,6 +143,27 @@ double tap to screen at any time to bring up the menu"""
         self.menu = MainMenu(self, x=layout_x, y=layout_y, width=layout_width,
                              current_level=self.current_level)
         self.add_widget(self.menu)
+
+    def end_game(self, *args):
+        end_game_text = """ 
+thanks for playing flingy
+ 
+you've beat all the levels we've got for today, but
+check back for more levels soon"""
+        end_game_label = Label(
+            text=end_game_text, font_size=20, width=self.width * .8,
+            x=self.width * .1, y=self.height - 200, color=(1., 1., 1., 0.))
+        self.add_widget(end_game_label)
+        anim = Animation(color=(1, 1, 1, 1), duration=2.)
+        anim.start(end_game_label)
+
+    def next_level(self, *args):
+        if self.current_level + 1 < len(levels):
+            self.load_level(self.current_level + 1)
+        else:
+            import pdb; pdb.set_trace()
+            Clock.schedule_once(self.end_game, 2.)
+
     def on_touch_down(self, touch):
         if hasattr(self, 'menu') and self.menu.collide_point(*touch.pos):
             for child in self.menu.children:
@@ -150,22 +171,8 @@ double tap to screen at any time to bring up the menu"""
                     child.dispatch('on_touch_down', touch)
 
         if touch.is_double_tap:
-            # for black_hole in self.black_holes:
-            #     if black_hole.collide_point(*touch.pos):
-            #         self.remove_widget(black_hole)
-            #         self.black_holes.remove(black_hole)
-            #         return True
-            # black_hole = BlackHole(pos=touch.pos)
-            # self.add_widget(black_hole)
-            # self.black_holes.append(black_hole)
-            for goal_point in self.goal_points:
-                if goal_point.collide_point(*touch.pos):
-                    self.remove_widget(goal_point)
-                    self.goal_points.remove(goal_point)
-                    return True
-            goal_point = GoalPoint(pos=touch.pos)
-            self.add_widget(goal_point)
-            self.goal_points.append(goal_point)
+            self.display_main_menu()
+
         self.aim_line = AimLine(touch.pos)
         self.add_widget(self.aim_line)
         return True
@@ -239,7 +246,7 @@ double tap to screen at any time to bring up the menu"""
                     self.goal_points.remove(goal_point)
 
                     if len(self.goal_points) == 0:
-                        print "DONE"
+                        Clock.schedule_once(self.next_level, 1)
                     continue
 
         for rocket in self.rockets:
