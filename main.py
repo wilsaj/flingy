@@ -13,8 +13,8 @@ from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.label import Label
 from kivy.uix.widget import Widget
 
-import levels
 from widgets import AimLine, BlackHole, GoalPoint, MainMenu, Rocket, Shot, Stars
+from levels import levels
 
 kivy.require('1.0.9')
 
@@ -34,7 +34,7 @@ class FlingBoard(Widget):
         self.aim_line = None
         self.black_holes = []
         self.buttons = []
-        self.current_level = 0
+        self.current_level = None
         self.level_label = None
         self.goal_points = []
         self.rockets = []
@@ -49,8 +49,7 @@ class FlingBoard(Widget):
         try:
             level_index = int(text)
             print "loading level %s..." % (level_index)
-            self.load_level(level_index)
-            return True
+            self.load_level(levels[level_index])
         except ValueError:
             pass
 
@@ -85,12 +84,12 @@ class FlingBoard(Widget):
         self.clear_widgets()
         self.add_stars()
 
-    def load_level(self, level_index):
+    def load_level(self, level):
         self.clear_level()
-        level = levels.levels[level_index]()
         level.load(self)
+        level_index = levels.index(level)
         level_text = "level %s: %s" % (level_index + 1, level.name)
-        self.current_level = level_index
+        self.current_level = level
         self.display_level_text(level_text)
 
     def restart_level(self, *args):
@@ -147,8 +146,9 @@ check back for more levels soon"""
 
 
     def next_level(self, *args):
-        if self.current_level + 1 < len(levels):
-            self.load_level(self.current_level + 1)
+        next_level_index = levels.index(self.current_level) + 1
+        if next_level_index < len(levels):
+            self.load_level(levels[next_level_index])
         else:
             Clock.schedule_once(self.end_game, 2.)
 
@@ -205,7 +205,7 @@ check back for more levels soon"""
         self.shots.remove(shot)
 
     def start_game(self, button):
-        self.load_level(0)
+        self.load_level(levels[0])
 
     def tick(self, dt):
         for shot1, shot2 in itertools.combinations(self.shots, 2):

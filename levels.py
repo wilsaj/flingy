@@ -9,6 +9,7 @@ from widgets import AimLine, BlackHole, GoalPoint, Rocket, Shot, Stars
 class First(object):
     name = "first fling"
 
+    @classmethod
     def load(self, fling_board):
         num_points = 10
         mid_height = fling_board.height / 2.
@@ -24,6 +25,7 @@ class First(object):
 class LongShot(object):
     name = "long shot"
 
+    @classmethod
     def load(self, fling_board):
         top_height = fling_board.height * .8
         bottom_height = fling_board.height * .2
@@ -38,6 +40,7 @@ class LongShot(object):
 class TwoTimed(object):
     name = "two, timed"
 
+    @classmethod
     def load(self, fling_board):
         top_height = fling_board.height * .7
         bottom_height = fling_board.height * .3
@@ -52,6 +55,7 @@ class TwoTimed(object):
                                     seconds_til_switch)
             fling_board.add_goal_point(goal_point)
 
+    @classmethod
     def change_direction(self, goal_point):
         def change_func(dt):
             goal_point.velocity_y *= -1
@@ -62,6 +66,7 @@ class TwoTimed(object):
 class TwoTimedTwo(object):
     name = "two, timed: part II"
 
+    @classmethod
     def load(self, fling_board):
         top_height = fling_board.height * .7
         bottom_height = fling_board.height * .3
@@ -80,6 +85,7 @@ class TwoTimedTwo(object):
                                     seconds_til_switch)
             fling_board.add_goal_point(goal_point)
 
+    @classmethod
     def change_direction(self, goal_point):
         def change_func(dt):
             goal_point.velocity_y *= -1
@@ -90,6 +96,7 @@ class TwoTimedTwo(object):
 class OrbitIt(object):
     name = "orbit it"
 
+    @classmethod
     def load(self, fling_board):
         num_points = 24
         r = 250
@@ -110,6 +117,7 @@ class OrbitIt(object):
 class GoFigure(object):
     name = "go figure"
 
+    @classmethod
     def load(self, fling_board):
         num_points = 24
         r = 250
