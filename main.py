@@ -43,7 +43,10 @@ class FlingBoard(Widget):
         self.goal_points = []
         self.shot_counter = None
         self.shots = []
+        self.stars = None
         self.walls = []
+
+        self.new_background()
 
         # schedule rather than call directly init, so that width and
         # height are finished initializing
@@ -78,7 +81,10 @@ class FlingBoard(Widget):
         self.shot_counter = shot_counter
         self.add_widget(shot_counter)
 
-    def add_stars(self):
+    def new_background(self):
+        if self.stars:
+            self.remove_widget(self.stars)
+
         self.stars = Stars(2000)
         self.add_widget(self.stars)
 
@@ -95,7 +101,8 @@ class FlingBoard(Widget):
         self.shots = []
         self.walls = []
         self.clear_widgets()
-        self.add_stars()
+        if self.stars:
+            self.add_widget(self.stars)
 
     def display_level_text(self, level_text):
         self.level_label = Label(
@@ -148,6 +155,7 @@ check back soon for more levels and updates"""
 
     def load_level(self, level):
         self.clear_level()
+        self.new_background()
         level.load(self)
         level_index = levels.index(level)
         level_text = "level %s: %s" % (level_index + 1, level.name)
