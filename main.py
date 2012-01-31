@@ -172,17 +172,16 @@ check back soon for more levels and updates"""
         start_v = Vector(self.aim_line.start_pt)
         end_v = Vector(self.aim_line.end_pt)
 
-        motion_v = start_v - end_v
-        l = motion_v.length()
+        velocity_v = start_v - end_v
+        l = velocity_v.length()
         if l == 0.:
             return
-        motion_v /= math.sqrt(l)
+        velocity_v /= math.sqrt(l)
 
-        shot = Shot(motion_v=motion_v, pos=(touch.x, touch.y))
-        self.add_widget(shot)
-        self.shots.append(shot)
 
-        # rocket = Rocket(motion_v=motion_v, pos=(touch.x, touch.y))
+        self.add_shot(Shot(velocity=velocity_v, pos=(touch.x, touch.y)))
+
+        # rocket = Rocket(velocity_v=velocity_v, pos=(touch.x, touch.y))
         # self.add_widget(rocket)
         # self.rockets.append(rocket)
 
@@ -259,8 +258,8 @@ def circles_collide(widget_1, widget_2):
 def shots_collide(shot1, shot2):
     p1_v = Vector(shot1.pos)
     p2_v = Vector(shot2.pos)
-    shot1.motion_v = (p1_v - p2_v).normalize() / Vector(shot1.motion_v).length()
-    shot2.motion_v = (p2_v - p1_v).normalize() / Vector(shot2.motion_v).length()
+    shot1.velocity = (p1_v - p2_v).normalize() / Vector(shot1.velocity).length()
+    shot2.velocity = (p2_v - p1_v).normalize() / Vector(shot2.velocity).length()
 
 
 if __name__ == '__main__':

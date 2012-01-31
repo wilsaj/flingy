@@ -117,27 +117,29 @@ class Rocket(Widget):
 class Shot(Widget):
     r = NumericProperty(10.)
     mass = NumericProperty(1.)
-    motion_v = ListProperty([0, 0])
+    velocity_x = NumericProperty(0)
+    velocity_y = NumericProperty(0)
+    velocity = ReferenceListProperty(velocity_x, velocity_y)
 
-    def __init__(self, motion_v, **kwargs):
+    def __init__(self, **kwargs):
         super(Shot, self).__init__(**kwargs)
-        self.motion_v = motion_v
 
     def move(self):
-        self.x += self.motion_v[0]
-        self.y += self.motion_v[1]
+        self.x += self.velocity_x
+        self.y += self.velocity_y
 
     def gravitate_towards(self, body):
-        m_v = Vector(self.motion_v)
-        g_v = Vector(body.pos) - Vector(self.pos)
-        self.motion_v = m_v + (g_v * 1. / g_v.length2()) * body.mass
+        velocity_v = Vector(self.velocity)
+        gravity_v = Vector(body.pos) - Vector(self.pos)
+        self.velocity = velocity_v + \
+                        (gravity_v * 1. / gravity_v.length2()) * body.mass
 
     def collide_wall(self, wall):
         if hasattr(self, 'last_bounced') and self.last_bounced == wall:
             return
 
         deflect_edge = None
-        m_v = Vector(self.motion_v)
+        velocity_v = Vector(self.velocity)
         pos_v = Vector(self.pos)
 
         edge_points = zip(wall.quad_points[0::2], wall.quad_points[1::2])
@@ -188,7 +190,7 @@ class Shot(Widget):
                         dist_from_deflect_edge = dist_from_edge
 
         if deflect_edge:
-            self.motion_v = m_v.rotate(-2 * m_v.angle(deflect_edge))
+            self.velocity = velocity_v.rotate(-2 * velocity_v.angle(deflect_edge))
             self.last_bounced = wall
 
 
