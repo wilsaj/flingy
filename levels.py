@@ -154,6 +154,7 @@ class Wally(object):
     name = "wally"
     max_shots = 1
 
+    @classmethod
     def load(self, fling_board):
         wall_x = fling_board.width * .7
         wall_top_y = fling_board.height * .6
