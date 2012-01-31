@@ -8,7 +8,7 @@ from widgets import AimLine, BlackHole, GoalPoint, Shot, Stars, Wall
 
 class First(object):
     name = "first fling"
-    num_shots = 1
+    max_shots = 1
 
     @classmethod
     def load(self, fling_board):
@@ -25,7 +25,7 @@ class First(object):
 
 class LongShot(object):
     name = "long shot"
-    num_shots = 1
+    max_shots = 1
 
     @classmethod
     def load(self, fling_board):
@@ -41,7 +41,7 @@ class LongShot(object):
 
 class TwoTimed(object):
     name = "two, timed"
-    num_shots = 1
+    max_shots = 1
 
     @classmethod
     def load(self, fling_board):
@@ -68,7 +68,7 @@ class TwoTimed(object):
 
 class TwoTimedTwo(object):
     name = "two, timed: part II"
-    num_shots = 1
+    max_shots = 1
 
     @classmethod
     def load(self, fling_board):
@@ -99,7 +99,7 @@ class TwoTimedTwo(object):
 
 class OrbitIt(object):
     name = "orbit it"
-    num_shots = 1
+    max_shots = 1
 
     @classmethod
     def load(self, fling_board):
@@ -121,7 +121,7 @@ class OrbitIt(object):
 
 class GoFigure(object):
     name = "go figure"
-    num_shots = 1
+    max_shots = 1
 
     @classmethod
     def load(self, fling_board):
@@ -152,7 +152,7 @@ class GoFigure(object):
 
 class Wally(object):
     name = "wally"
-    num_shots = 1
+    max_shots = 1
 
     def load(self, fling_board):
         wall_x = fling_board.width * .7

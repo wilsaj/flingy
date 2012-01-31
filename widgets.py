@@ -5,10 +5,12 @@ import itertools
 from random import random
 
 from kivy.clock import Clock
-from kivy.properties import BooleanProperty, ListProperty, NumericProperty, ReferenceListProperty
+from kivy.properties import (BooleanProperty, ListProperty, NumericProperty,
+                             ReferenceListProperty, StringProperty)
 from kivy.vector import Vector
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
+from kivy.uix.label import Label
 from kivy.uix.widget import Widget
 
 
@@ -148,6 +150,26 @@ class Shot(Widget):
         if deflect_edge:
             self.velocity = velocity_v.rotate(-2 * velocity_v.angle(deflect_edge))
             self.last_bounced = wall
+
+
+class ShotCounter(Label):
+    num_shots = NumericProperty(0)
+    max_shots = NumericProperty(1)
+    format = StringProperty('shots: %s / %s')
+
+    def __init__(self, num_shots=0, max_shots=1, font_size=15, **kwargs):
+        super(ShotCounter, self).__init__(**kwargs)
+        self.font_size = font_size
+        self.bind(num_shots=self.update_text)
+        self.bind(max_shots=self.update_text)
+        self.update_text()
+
+    def increment(self):
+        self.num_shots += 1
+
+    def update_text(self, *args):
+        self.text = self.format % (self.max_shots - self.num_shots,
+                                   self.max_shots)
 
 
 class Stars(Widget):

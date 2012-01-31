@@ -13,7 +13,8 @@ from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.label import Label
 from kivy.uix.widget import Widget
 
-from widgets import AimLine, BlackHole, GoalPoint, MainMenu, Shot, Stars
+from widgets import (AimLine, BlackHole, GoalPoint, MainMenu, Shot,
+                     ShotCounter, Stars)
 from levels import levels
 
 kivy.require('1.0.9')
@@ -40,6 +41,7 @@ class FlingBoard(Widget):
         self.current_level = None
         self.level_label = None
         self.goal_points = []
+        self.shot_counter = None
         self.shots = []
         self.walls = []
 
@@ -70,6 +72,11 @@ class FlingBoard(Widget):
     def add_shot(self, shot):
         self.shots.append(shot)
         self.add_widget(shot)
+        self.shot_counter.increment()
+
+    def add_shot_counter(self, shot_counter):
+        self.shot_counter = shot_counter
+        self.add_widget(shot_counter)
 
     def add_stars(self):
         self.stars = Stars(2000)
@@ -146,6 +153,8 @@ check back soon for more levels and updates"""
         level_text = "level %s: %s" % (level_index + 1, level.name)
         self.current_level = level
         self.display_level_text(level_text)
+        self.add_shot_counter(ShotCounter(
+            max_shots=level.max_shots, x=30, y=15))
 
     def next_level(self, *args):
         next_level_index = levels.index(self.current_level) + 1
@@ -164,8 +173,8 @@ check back soon for more levels and updates"""
             self.display_main_menu()
 
         if self.current_level and \
-           len(self.shots) < self.current_level.num_shots:
-            self.add_aim_line(AimLine(touch.pos))
+           len(self.shots) < self.current_level.max_shots:
+            self.add_aim_line(AimLine(start_pt=touch.pos))
 
     def on_touch_move(self, touch):
         if not self.aim_line:
@@ -193,7 +202,7 @@ check back soon for more levels and updates"""
             self.remove_shot(self.shots[0])
 
         if self.current_level and \
-           len(self.shots) < self.current_level.num_shots:
+           len(self.shots) < self.current_level.max_shots:
             self.add_shot(Shot(velocity=velocity_v, pos=(touch.x, touch.y)))
 
         self.remove_aim_line(self.aim_line)
