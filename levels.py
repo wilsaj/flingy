@@ -199,6 +199,25 @@ class HopSkip(object):
             fling_board.add_goal_point(GoalPoint(
                 pos=(hop_x, 325)))
 
+
+class Kinetic(object):
+    name = "kinetic"
+    max_shots = 2
+
+    @classmethod
+    def load(self, fling_board):
+        center_y = fling_board.height * .5
+        for scale in [.2, .3, .4, .5, .6]:
+            x = fling_board.width * scale
+            fling_board.add_goal_point(GoalPoint(
+                pos=(x, center_y)))
+
+        for offset in [50, 100]:
+            fling_board.add_goal_point(GoalPoint(
+                pos=(x + offset, center_y + offset)))
+            fling_board.add_goal_point(GoalPoint(
+                pos=(x, center_y - offset)))
+
 levels = [
     First,
     LongShot,
@@ -207,5 +226,6 @@ levels = [
     OrbitIt,
     GoFigure,
     Wally,
-    HopSkip
+    HopSkip,
+    Kinetic,
 ]
