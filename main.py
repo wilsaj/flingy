@@ -7,6 +7,7 @@ from kivy.animation import Animation
 from kivy.app import App
 from kivy.clock import Clock
 from kivy.core.window import Window
+from kivy.config import Config
 from kivy.lang import Builder
 from kivy.vector import Vector
 from kivy.uix.floatlayout import FloatLayout
@@ -274,6 +275,12 @@ check back soon for more levels and updates"""
 class FlingyApp(App):
     def build(self):
         return FlingBoard()
+
+    def build_config(self, config):
+        config.setdefaults('graphics', {
+            'width': '800',
+            'height': '600'
+        })
 
 
 def circles_collide(widget_1, widget_2):
