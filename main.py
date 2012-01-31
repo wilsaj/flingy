@@ -102,7 +102,7 @@ class FlingBoard(Widget):
     def display_level_text(self, level_text):
         self.level_label = Label(
             text=level_text, font_size=20, width=self.width, halign='center',
-            y=self.height - 200, color=(1., 1., 1., 0.))
+            y=self.height - 200, color=(.8, .8, .8, 0.))
         self.add_widget(self.level_label)
         anim = Animation(color=(1, 1, 1, 1), duration=2.) + \
             Animation(color=(1, 1, 1, 1), duration=.5) + \
@@ -122,9 +122,9 @@ need to restart the level if you run out
 double tap to screen at any time to bring up the menu"""
         instructions_label = Label(
             text=instructions_text, font_size=20, width=self.width * .8,
-            x=self.width * .1, y=self.height - 200, color=(1., 1., 1., 0.))
+            x=self.width * .1, y=self.height - 200, color=(.8, .8, .8, 0.))
         self.add_widget(instructions_label)
-        anim = Animation(color=(1, 1, 1, 1), duration=2.)
+        anim = Animation(color=(.8, 1, 1, 1), duration=2.)
         anim.start(instructions_label)
 
     def display_main_menu(self, *args):
@@ -148,7 +148,7 @@ check back soon for more levels and updates"""
             text=end_game_text, font_size=20, width=self.width * .8,
             x=self.width * .1, y=self.height - 200, color=(1., 1., 1., 0.))
         self.add_widget(end_game_label)
-        anim = Animation(color=(1, 1, 1, 1), duration=2.)
+        anim = Animation(color=(.8, 1, 1, 1), duration=2.)
         anim.start(end_game_label)
 
     def load_level(self, level):
