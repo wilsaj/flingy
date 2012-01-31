@@ -18,6 +18,9 @@ from levels import levels
 
 kivy.require('1.0.9')
 
+# set a limit on the number of shots allowed on screen at once
+MAX_SHOTS = 20
+
 
 class FlingBoard(Widget):
     """
@@ -178,6 +181,8 @@ check back soon for more levels and updates"""
             return
         velocity_v /= math.sqrt(l)
 
+        if len(self.shots) > MAX_SHOTS:
+            self.remove_shot(self.shots[0])
 
         self.add_shot(Shot(velocity=velocity_v, pos=(touch.x, touch.y)))
 
